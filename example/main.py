@@ -16,7 +16,7 @@ class ExampleQuestionType(QuestionType):
                 CheckboxGroupElement(checkboxes=[
                     CheckboxElement(label="A checkbox inside a group", name="grouped_checkbox")
                 ]),
-                RadioGroupElement(label="A radio group", name="radio", buttons=[
+                RadioGroupElement(label="A radio group", name="radio", options=[
                     RadioGroupElement.Option(label="Radio Button 1", value="1"),
                     RadioGroupElement.Option(label="Radio Button 2", value="2")
                 ]),

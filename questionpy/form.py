@@ -55,11 +55,11 @@ class RadioGroupElement(_BaseElement, Submittable):
         value: str
 
     kind: Literal["radio_group"] = "radio_group"
-    buttons: List[Option]
+    options: List[Option]
     required: bool = False
 
     def to_model_field(self) -> Tuple[Any, Any]:
-        option_types = tuple(Literal[option.value] for option in self.buttons)
+        option_types = tuple(Literal[option.value] for option in self.options)
         if self.required:
             return Union[option_types], ...
         return Optional[Union[option_types]], None

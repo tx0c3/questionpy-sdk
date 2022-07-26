@@ -76,7 +76,7 @@ def test_valid_options() -> None:
                 RadioGroupElement(
                     name="radio_group",
                     label="",
-                    buttons=[RadioGroupElement.Option(label="", value="selected_value")]
+                    options=[RadioGroupElement.Option(label="", value="selected_value")]
                 )
             ])
 

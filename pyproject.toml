@@ -65,7 +65,7 @@ output-format = "colorized"
 [tool.pylint."MESSAGES CONTROL"]
 disable = [
     "missing-module-docstring", "missing-class-docstring", "missing-function-docstring",
-    "unused-wildcard-import"
+    "unused-wildcard-import", "too-few-public-methods",
 ]
 enable = ""
 
@@ -75,6 +75,7 @@ expected-line-ending-format = "LF"
 indent-after-paren = 4
 indent-string = "    "
 max-line-length = 120
+class-const-naming-style = "snake_case"
 
 [tool.pylint.IMPORTS]
 

@@ -82,6 +82,9 @@ max-line-length = 120
 [tool.pylint.IMPORTS]
 allow-wildcard-with-all = true
 
+[tool.pylint.TYPECHECKER]
+ignored-classes = ["_SectionInfo", "_FieldInfo", "_StaticElementInfo"]
+
 [tool.mypy]
 plugins = "pydantic.mypy"
 disallow_untyped_defs = true

@@ -29,6 +29,9 @@ mypy = "^0.971"
 flake8 = "^5.0.4"
 types-PyYAML = "^6.0.11"
 
+[tool.poetry.scripts]
+questionpy-sdk-package = 'questionpy_sdk.commands.package:package'
+questionpy-sdk-run = 'questionpy_sdk.commands.run:run'
 
 [tool.pytest.ini_options]
 # https://github.com/pytest-dev/pytest-asyncio#auto-mode

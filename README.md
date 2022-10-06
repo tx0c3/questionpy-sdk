@@ -32,7 +32,7 @@ Once you have written your manifest, use the `package` command to create your pa
 the directory in which your manifest resides.
 
 ```shell
-$ python -m questionpy_sdk package example
+$ questionpy-sdk package example
 ```
 
 If your package passes validation, you will have a new file called `example.qpy`. This is your question package,
@@ -62,14 +62,14 @@ requirements: requirements.txt
 The SDK also executes question packages and provides their runtime.
 
 ```shell
-$ python -m questionpy_sdk run example.qpy
+$ questionpy-sdk run example.qpy
 ```
 
 You can then communicate with the question package using JSON objects on stdin and stdout, although it is often more
 comfortable to pipe in messages on the command line.
 
 ```shell
-$ echo '{"kind": "ping"}' | python -m questionpy_sdk run example.qpy
+$ echo '{"kind": "ping"}' | questionpy-sdk run example.qpy
 {"kind": "pong"}
 ```
 

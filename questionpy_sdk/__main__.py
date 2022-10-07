@@ -3,6 +3,7 @@ import sys
 
 import click
 
+from questionpy_sdk.commands.create import create
 from questionpy_sdk.commands.package import package
 from questionpy_sdk.commands.run import run
 
@@ -13,6 +14,7 @@ def cli(verbose: bool) -> None:
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, stream=sys.stderr)
 
 
+cli.add_command(create)
 cli.add_command(package)
 cli.add_command(run)
 

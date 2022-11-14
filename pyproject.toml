@@ -16,7 +16,7 @@ aiohttp = "^3.8.1"
 pydantic = "^1.9.1"
 PyYAML = "^6.0"
 questionpy-common = {git = "https://github.com/questionpy-org/questionpy-common.git", rev = "a217e38"}
-questionpy-server = {git = "https://github.com/questionpy-org/questionpy-server.git", rev = "19c588a"}
+questionpy-server = {git = "https://github.com/questionpy-org/questionpy-server.git", rev = "f6db4fa"}
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.14.5"

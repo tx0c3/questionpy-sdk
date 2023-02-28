@@ -12,6 +12,11 @@ packages = [
     { include = "questionpy" },
     { include = "questionpy_sdk" }
 ]
+include = ["questionpy_sdk/resources/example.zip"]
+
+[tool.poetry.build]
+generate-setup-file = false
+script = "build.py"
 
 [tool.poetry.dependencies]
 click = "^8.1.3"
@@ -19,8 +24,8 @@ python = "^3.9"
 aiohttp = "^3.8.1"
 pydantic = "^1.9.1"
 PyYAML = "^6.0"
-questionpy-common = { git = "https://github.com/questionpy-org/questionpy-common.git", rev = "a43ccb2" }
-questionpy-server = { git = "https://github.com/questionpy-org/questionpy-server.git", rev = "b25729e" }
+questionpy-common = { git = "https://github.com/questionpy-org/questionpy-common.git", rev = "081ab6e" }
+questionpy-server = { git = "https://github.com/questionpy-org/questionpy-server.git", rev = "534996f" }
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.14.5"

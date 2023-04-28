@@ -83,10 +83,10 @@ class IndexCreator:
         """
         index_path = self._root / "PACKAGES.json.gz"
         meta = RepoMeta(
+            repository_schema_version=1,
             timestamp=datetime.now(timezone.utc),
             sha256=calculate_hash(index_path),
             size=index_path.stat().st_size,
-            version=1
         )
         meta_path = self._root / "META.json"
         meta_path.write_text(meta.json())

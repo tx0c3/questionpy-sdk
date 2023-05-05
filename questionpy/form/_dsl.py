@@ -21,9 +21,9 @@ _ZeroOrMoreConditions: TypeAlias = Optional[_OneOrMoreConditions]
 def _listify(value: _ZeroOrMoreConditions) -> list[Condition]:
     if value is None:
         return []
-    if isinstance(value, Condition):
-        return [value]
-    return value
+    if isinstance(value, list):
+        return value
+    return [value]
 
 
 @overload

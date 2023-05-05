@@ -1278,8 +1278,8 @@ pydantic-factories = "^1.17.2"
 [package.source]
 type = "git"
 url = "https://github.com/questionpy-org/questionpy-common.git"
-reference = "1851fd8701ea73f0cd87d239524dc458d9aa197f"
-resolved_reference = "1851fd8701ea73f0cd87d239524dc458d9aa197f"
+reference = "b6ead24058dba49a427cf4516d6a2cf6789bbe4d"
+resolved_reference = "b6ead24058dba49a427cf4516d6a2cf6789bbe4d"
 
 [[package]]
 name = "questionpy-server"
@@ -1295,15 +1295,15 @@ develop = false
 aiohttp = "^3.8.1"
 psutil = "^5.9.4"
 pydantic = "^1.10.6"
-questionpy-common = {git = "https://github.com/questionpy-org/questionpy-common.git", rev = "1851fd8701ea73f0cd87d239524dc458d9aa197f"}
+questionpy-common = {git = "https://github.com/questionpy-org/questionpy-common.git", rev = "b6ead24058dba49a427cf4516d6a2cf6789bbe4d"}
 semver = "^3.0.0"
 watchdog = "^3.0.0"
 
 [package.source]
 type = "git"
 url = "https://github.com/questionpy-org/questionpy-server.git"
-reference = "74281546d3eea5936a89571af2889f4505612040"
-resolved_reference = "74281546d3eea5936a89571af2889f4505612040"
+reference = "4650f418f7dcf94367e798389e2f18a619f1c5e6"
+resolved_reference = "4650f418f7dcf94367e798389e2f18a619f1c5e6"
 
 [[package]]
 name = "semver"
@@ -1642,4 +1642,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b057961bd9e6ff4b9f9bf3a1af6237f58e6e887251f31280a7f8a580e4f9a7d6"
+content-hash = "52636963b00c2ee6a758df518833aea91309f6e629543817828ebe82cf599b00"

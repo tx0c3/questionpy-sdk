@@ -461,7 +461,9 @@ def group(label: str, model: Type[_F], *,
         lambda name: GroupElement(name=name, label=label, elements=model.qpy_form.general,
                                   help=help,
                                   disable_if=_listify(disable_if), hide_if=_listify(hide_if)),
-        model
+        # When the group dict is not provided at all in the form data, we try to build a default model instance.
+        # If the nested model contains required fields, this will raise an error with a decent message.
+        model, default_factory=lambda: model()
     ))
 
 

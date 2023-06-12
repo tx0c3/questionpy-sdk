@@ -106,6 +106,7 @@ class _FieldInfo:
     """The type of the field."""
     default: object = ...
     """The default value of the field, with `...` meaning no default."""
+    default_factory: Optional[Callable[[], object]] = None
 
 
 @dataclass
@@ -165,7 +166,11 @@ class _FormModelMeta(ModelMetaclass):
         for key, value in namespace.items():
             if isinstance(value, _FieldInfo):
                 expected_type = value.type
-                new_namespace[key] = Field(default=value.default, form_element=value.build(key))
+                new_namespace[key] = Field(form_element=value.build(key))
+                if value.default is not ...:
+                    new_namespace[key].default = value.default
+                elif value.default_factory:
+                    new_namespace[key].default_factory = value.default_factory
             elif isinstance(value, _SectionInfo):
                 section = FormSection(name=key, header=value.header, elements=value.model.qpy_form.general)
                 expected_type = value.model

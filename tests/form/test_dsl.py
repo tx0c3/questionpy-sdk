@@ -219,3 +219,26 @@ def test_OptionEnum_should_serialize_to_value() -> None:
 
 def test_OptionEnum_should_deserialize_from_value() -> None:
     assert parse_raw_as(MyOptionEnum, '"OPT_1"') is MyOptionEnum.OPT_1
+
+
+def test_group_without_required_fields_can_be_omitted() -> None:
+    class Inner(FormModel):
+        optional: Optional[str] = text_input("")
+
+    class Outer(FormModel):
+        grp = group("", Inner)
+
+    parsed = Outer.parse_obj({})
+    assert isinstance(parsed.grp, Inner)
+    assert parsed.grp.optional is None
+
+
+def test_group_with_required_field_cannot_be_omitted() -> None:
+    class Inner(FormModel):
+        optional: str = text_input("", required=True)
+
+    class Outer(FormModel):
+        grp = group("", Inner)
+
+    with pytest.raises(ValidationError):
+        Outer.parse_obj({})

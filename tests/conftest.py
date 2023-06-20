@@ -50,8 +50,8 @@ def create_package(path: Path, short_name: str, namespace: str = "local", versio
         directory = Path(fs, manifest.short_name)
         directory.mkdir()
 
-        with (directory / "qpy_manifest.yml").open("w") as f:
-            safe_dump(manifest.dict(exclude={"type"}), f)
+        with (directory / "qpy_manifest.yml").open("w") as manifest_file:
+            safe_dump(manifest.dict(exclude={"type"}), manifest_file)
 
         package_path = Path("package.qpy")
 

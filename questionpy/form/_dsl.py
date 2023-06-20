@@ -463,7 +463,7 @@ def group(label: str, model: Type[_F], *,
                                   disable_if=_listify(disable_if), hide_if=_listify(hide_if)),
         # When the group dict is not provided at all in the form data, we try to build a default model instance.
         # If the nested model contains required fields, this will raise an error with a decent message.
-        model, default_factory=lambda: model()
+        model, default_factory=model
     ))
 
 

@@ -68,9 +68,12 @@ fail-under = 8
 
 [tool.pylint.BASIC]
 # Allow these well-known names despite usual naming conventions
-good-names = ["i", "j", "k", "e", "ex", "_"]
+good-names = ["i", "j", "k", "e", "ex", "fs", "_"]
 # Allow any name for test methods
 function-rgx = "^test_.+|[a-z0-9_]+$"
+
+[tool.pylint.VARIABLES]
+allowed-redefined-builtins = ["help"]
 
 [tool.pylint.CLASSES]
 valid-metaclass-classmethod-first-arg = "mcs"

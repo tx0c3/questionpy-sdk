@@ -87,8 +87,8 @@ def test_package_with_invalid_out_path_raises_error() -> None:
 
 def test_package_with_only_source() -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        manifest = create_source_directory(Path(f), "source")
+    with runner.isolated_filesystem() as fs:
+        manifest = create_source_directory(Path(fs), "source")
         result = runner.invoke(package, ["source"])
         assert result.exit_code == 0
         assert Path(".", f"{create_normalized_filename(manifest)}").exists()
@@ -96,8 +96,8 @@ def test_package_with_only_source() -> None:
 
 def test_package_creates_package_in_cwd() -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        directory = Path(f)
+    with runner.isolated_filesystem() as fs:
+        directory = Path(fs)
         manifest = create_source_directory(directory, "source")
 
         # Change current working directory to 'cwd'.
@@ -112,8 +112,8 @@ def test_package_creates_package_in_cwd() -> None:
 
 def test_package_with_out_path() -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        directory = Path(f)
+    with runner.isolated_filesystem() as fs:
+        directory = Path(fs)
         create_source_directory(directory, "source")
 
         result = runner.invoke(package, ["source", "--out", "source.qpy"])
@@ -123,8 +123,8 @@ def test_package_with_out_path() -> None:
 
 def test_package_with_not_existing_manifest_as_argument_raises_error() -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        directory = Path(f)
+    with runner.isolated_filesystem() as fs:
+        directory = Path(fs)
         (directory / "source").mkdir()
         result = runner.invoke(package, ["source", "--manifest", "manifest.yml"])
         assert result.exit_code != 0
@@ -133,8 +133,8 @@ def test_package_with_not_existing_manifest_as_argument_raises_error() -> None:
 
 def test_package_with_directory_as_manifest_argument_raises_error() -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        directory = Path(f)
+    with runner.isolated_filesystem() as fs:
+        directory = Path(fs)
         (directory / "source").mkdir()
         (directory / "manifest.yml").mkdir()
         result = runner.invoke(package, ["source", "--manifest", "manifest.yml"])
@@ -144,8 +144,8 @@ def test_package_with_directory_as_manifest_argument_raises_error() -> None:
 
 def test_package_with_invalid_yaml_as_manifest_raises_error() -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        directory = Path(f)
+    with runner.isolated_filesystem() as fs:
+        directory = Path(fs)
         (directory / "source").mkdir()
         (directory / "manifest.yml").write_text("{")
 
@@ -156,8 +156,8 @@ def test_package_with_invalid_yaml_as_manifest_raises_error() -> None:
 
 def test_package_with_invalid_manifest_raises_error() -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        directory = Path(f)
+    with runner.isolated_filesystem() as fs:
+        directory = Path(fs)
         (directory / "source").mkdir()
         (directory / "manifest.yml").write_text("invalid: manifest")
 
@@ -168,8 +168,8 @@ def test_package_with_invalid_manifest_raises_error() -> None:
 
 def test_package_with_namespace_argument() -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        directory = Path(f)
+    with runner.isolated_filesystem() as fs:
+        directory = Path(fs)
 
         # Create empty source directory and manifest in the root directory.
         (directory / "source").mkdir()
@@ -183,8 +183,8 @@ def test_package_with_namespace_argument() -> None:
 @pytest.mark.parametrize("prompt_input", ["n", "N", "\n", "not_y"])
 def test_package_with_existing_file_and_not_overwriting(prompt_input: str) -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        directory = Path(f)
+    with runner.isolated_filesystem() as fs:
+        directory = Path(fs)
         create_source_directory(directory, "source")
         (directory / "source.qpy").touch()
 
@@ -197,8 +197,8 @@ def test_package_with_existing_file_and_not_overwriting(prompt_input: str) -> No
 @pytest.mark.parametrize("prompt_input", ["y", "Y"])
 def test_package_with_existing_file_and_overwriting(prompt_input: str) -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        directory = Path(f)
+    with runner.isolated_filesystem() as fs:
+        directory = Path(fs)
         create_source_directory(directory, "source")
         (directory / "source.qpy").touch()
 
@@ -208,6 +208,7 @@ def test_package_with_existing_file_and_overwriting(prompt_input: str) -> None:
         assert result.exit_code == 0
 
 
+# TODO: Implement or remove this test
 @pytest.mark.skip(reason="Not implemented yet.")
 def test_installing_requirement_fails() -> None:
     pass

@@ -31,8 +31,8 @@ def test_create_no_arguments() -> None:
 
 def test_create_example_package() -> None:
     runner = CliRunner()
-    with runner.isolated_filesystem() as f:
-        directory = Path(f)
+    with runner.isolated_filesystem() as fs:
+        directory = Path(fs)
         with ZipFile(EXAMPLE_PACKAGE) as zip_file:
             original = directory / "original"
             original.mkdir()

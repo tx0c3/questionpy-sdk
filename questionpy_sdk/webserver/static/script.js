@@ -6,7 +6,6 @@
 
 import * as conditions from "./conditions.js";
 
-
 /**
  * Selects all elements that have a list of conditions as a data attribute. The lists of conditions are an
  * unparsed JSON string and represent either a hide_if list or a disable_if list (see: {@link conditions.Types}).
@@ -43,7 +42,8 @@ function add_conditions_to_element(element, condition_type){
     }
     element.conditions[condition_type.value] = [];
     JSON.parse(element.dataset[condition_type.value]).forEach(object => {
-        let condition = conditions.Condition.from_object(object);
+        var reference = JSON.parse(element.dataset['absolute_path'])
+        let condition = conditions.Condition.from_object(object, reference);
         condition.targets.forEach(target => add_source_element_to_target(target, element, condition_type));
         element.conditions[condition_type.value].push(condition);
     });
@@ -180,28 +180,34 @@ function check_all_element_conditions(elements) {
     }
 }
 
+
 /**
- * Event handler for the "submit" event of the form.
- *
- * @param event
+ * Creates JSON object from element in a form.
+ * @param form
+ * @return {}
  */
-async function handle_submit(event) {
-    // prevent reload on submit
-    event.preventDefault();
-
+function create_json_form_data(form) {
     const json_form_data = {};
-    for (const pair of new FormData(event.target)) {
-        json_form_data[pair[0]] = pair[1];
+    for (const pair of new FormData(form)) {
+        if (json_form_data[pair[0]]) {
+            json_form_data[pair[0]].push(pair[1]);
+        } else if (pair[0].endsWith('_[]')) {
+            json_form_data[pair[0]] = [pair[1]];
+        } else {
+            json_form_data[pair[0]] = pair[1];
+        }
     }
 
-    const headers = {'Content-Type': 'application/json'}
-    const response = await post_http_request('/submit', headers, json_form_data);
-    if (response.status == 200){
-        document.getElementById('submit_success_info').hidden = null;
-    } else {
-        alert('An error occured.');
+    for (var entry in json_form_data) {
+        if (entry.endsWith('_[]')) {
+            json_form_data[entry.substring(0, entry.length-3)] = json_form_data[entry];
+            delete json_form_data[entry];
+        }
     }
+
+    return json_form_data;
 }
+
 
 /**
  *
@@ -226,6 +232,70 @@ async function post_http_request(url, headers, body) {
     }
 }
 
+
+/**
+ * Event handler for the "submit" event of the form.
+ *
+ * @param event
+ */
+async function handle_submit(event) {
+    // prevent reload on submit
+    event.preventDefault();
+
+    const json_form_data = create_json_form_data(event.target);
+    const headers = {'Content-Type': 'application/json'}
+    const response = await post_http_request('/submit', headers, json_form_data);
+    if (response.status == 200){
+        document.getElementById('submit_success_info').hidden = null;
+    } else {
+        alert('An error occured.');
+    }
+}
+
+
+/**
+ * Adds a repetition element to the repetition element parent.
+ *
+ * Adds n repetitions, where n = repetition_increment, to the parent element.
+ * @param event
+ */
+async function add_repetition_element(event) {
+    // prevent reload on submit
+    event.preventDefault();
+    const form = document.getElementById('options_form');
+
+    const data = {
+        'form_data': create_json_form_data(form),
+        'element-name': event.target.name,
+        'increment': event.target.dataset['repetition_increment']
+    }
+
+    const headers = {'Content-Type': 'application/json'}
+    const response = await post_http_request('/repeat', headers, data);
+    if (response.status == 200){
+        document.getElementById('submit_success_info').hidden = null;
+        window.location.reload();
+    } else {
+        alert('An error occured.');
+    }
+}
+
+
+/**
+ * When a Delete Button is clicked, removes the corresponding repetition.
+ */
+async function delete_repetition_element(event) {
+    // prevent reload on click
+    event.preventDefault();
+    // count current repetitions - 1 for the add-repetition button
+    const current_repetitions = event.target.parentElement.parentElement.children.length - 1;
+    if (current_repetitions > event.target.dataset['initial_repetitions']) {
+        event.target.parentElement.remove();
+    }
+}
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const elements = get_elements_with_conditions();
     // check conditions manually. without the change event
@@ -233,4 +303,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const form = document.querySelector('form');
     form.addEventListener('submit', handle_submit);
+
+    const repetition_buttons = document.getElementsByClassName("repetition-button");
+    Array.from(repetition_buttons).forEach(button => button.addEventListener("click", add_repetition_element));
+
+    const repetition_buttons_delete = document.getElementsByClassName("repetition-button-delete");
+    Array.from(repetition_buttons_delete).forEach(button => button.addEventListener("click", delete_repetition_element));
 })

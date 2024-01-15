@@ -123,16 +123,18 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
     """A question type.
 
     This class is intended to be used in one of two ways:
-    - If you don't need to override any of the default :class:`QuestionType` methods, you should provide your
-      :class:`FormModel` and :class:`Question` subclasses as constructor arguments.
-    - If you do, you should inherit from :class:`QuestionType`, specifying your :class:`FormModel` and :class:`Question`
-      as type arguments:
 
-      >>> class MyOptions(FormModel): ...
-      >>> class MyAttempt(Attempt): ...
-      >>> class MyQuestion(Question[BaseQuestionState[MyOptions], MyAttempt]): ...
-      >>> class MyQuestionType(QuestionType[MyOptions, MyQuestion]):
-      ...   ...  # Your code goes here.
+    - If you don't need to override any of the default :class:`QuestionType` methods, you should provide your
+        :class:`FormModel` and :class:`Question` subclasses as constructor arguments.
+    - If you do, you should inherit from :class:`QuestionType`, specifying your :class:`FormModel` and :class:`Question`
+        as type arguments:
+
+    Examples:
+        >>> class MyOptions(FormModel): ...
+        >>> class MyAttempt(Attempt): ...
+        >>> class MyQuestion(Question[BaseQuestionState[MyOptions], MyAttempt]): ...
+        >>> class MyQuestionType(QuestionType[MyOptions, MyQuestion]):
+        ...   ...  # Your code goes here.
     """
 
     # We'd declare these using _F and _Q ideally, but that leads to "Access to generic instance variables via class is

@@ -8,6 +8,27 @@ from typing import Optional, Any, Union
 
 
 def _unflatten(flat_form_data: dict[str, str]) -> dict[str, Any]:
+    """Splits the keys of a dictionary to form a new nested dictionary.
+
+    Each key of the input dictionary is a reference string of a FormElements from the Options Form.
+    These strings are split to create a nested dictionary, where each key is one part of the reference.
+    Additionally: Dictionaries with only numerical keys (Repetition Elements) are replaced by lists.
+
+    Example:
+        This::
+
+            {
+                'general[my_hidden]': 'foo',
+                'general[my_repetition][1][role]': 'OPT_1',
+                'general[my_repetition][1][name][first_name]': 'John '
+            }
+        becomes::
+
+            {
+                'my_hidden': 'foo',
+                'my_repetition': [{'name': {'first_name': 'John '}, 'role': 'OPT_1'}],
+            }
+    """
     unflattened_dict: dict[str, Any] = {}
     for key, value in flat_form_data.items():
         keys = key.replace(']', '').split('[')[:-1]
@@ -19,13 +40,14 @@ def _unflatten(flat_form_data: dict[str, str]) -> dict[str, Any]:
         current_dict[key.split('[')[-1][:-1]] = value
 
     result = _convert_repetition_dict_to_list(unflattened_dict)
-    if isinstance(result, dict):
-        return result
-    else:
+    if not isinstance(result, dict):
         raise ValueError("The result is not a dictionary.")
+
+    return result
 
 
 def _convert_repetition_dict_to_list(dictionary: dict[str, Any]) -> Union[dict[str, Any], list[Any]]:
+    """Recursively transforms a dict with only numerical keys to a list."""
     if not isinstance(dictionary, dict):
         return dictionary
 
@@ -39,6 +61,26 @@ def _convert_repetition_dict_to_list(dictionary: dict[str, Any]) -> Union[dict[s
 
 
 def parse_form_data(form_data: dict) -> dict:
+    """Form data from a flat dictionary is parsed into a nested dictionary.
+
+    This function parses a dictionary, where the keys are the references to the Form Element from the Options Form.
+    The references are used to create a nested dictionary with the form data. Elements in the 'general' section are
+    moved to the root of the dictionary.
+    Example:
+        This::
+
+            {
+                'general[my_hidden]': 'foo',\n
+                'general[my_repetition][1][role]': 'OPT_1',\n
+                'general[my_repetition][1][name][first_name]': 'John '
+            }
+        becomes::
+
+            {
+                'my_hidden': 'foo',\n
+                'my_repetition': [{'name': {'first_name': 'John '}, 'role': 'OPT_1'}]
+            }
+    """
     unflattened_form_data = _unflatten(form_data)
     options = unflattened_form_data['general']
     for section_name, section in unflattened_form_data.items():
@@ -61,7 +103,7 @@ def add_repetition(form_data: dict[str, Any], reference: list, increment: int) -
         return form_data
 
     # Add "increment" number of repetitions.
-    for i in range(increment):
+    for _ in range(increment):
         current_element.append(current_element[-1])
 
     return form_data

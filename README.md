@@ -11,7 +11,7 @@ $ poetry install
 ## :package: Creating a QuestionPy Package
 
 At minimum, a QuestionPy package requires a manifest. The manifest is a YAML-formatted file called `qpy_manifest.yml` at
-the root of your package. See the [Manifest](questionpy/_manifest.py) class for all supported properties.
+the root of your package. See the `Manifest` class for all supported properties.
 
 ```yaml
 # file example/qpy_manifest.yml
@@ -24,8 +24,6 @@ version: 0.1.0
 api_version: 0.1
 # You or your organization
 author: Bob Sample <bob@example.org>
-# Optional: The module within your package that should be imported when the package is run
-entrypoint: main
 ```
 
 Once you have written your manifest, use the `package` command to create your package as follows, where `example` is
@@ -64,13 +62,3 @@ The SDK also executes question packages and provides their runtime.
 ```shell
 $ questionpy-sdk run example.qpy
 ```
-
-You can then communicate with the question package using JSON objects on stdin and stdout, although it is often more
-comfortable to pipe in messages on the command line.
-
-```shell
-$ echo '{"kind": "ping"}' | questionpy-sdk run example.qpy
-{"kind": "pong"}
-```
-
-The flag `--pretty`/`-p` will cause responses to be indented over multiple lines.

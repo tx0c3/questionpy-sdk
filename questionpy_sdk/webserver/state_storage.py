@@ -128,6 +128,7 @@ class QuestionStateStorage:
 
     def insert(self, key: PackageLocation, question_state: dict) -> None:
         path = self._state_path_for_package(key)
+        path.parent.mkdir(parents=True, exist_ok=True)
         self.paths[str(key)] = path
         with path.open('w') as file:
             json.dump(question_state, file, indent=2)

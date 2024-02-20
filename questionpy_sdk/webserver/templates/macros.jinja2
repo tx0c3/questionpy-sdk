@@ -46,7 +46,7 @@
             <div class="repetition-content">
                 {# Add a hidden element marking this as a repetition item, so empty repetition items don't get lost. #}
                 <input type="hidden"
-                       name="{{ path_list_to_string(repetition_element.path + [loop.index0, 'qpy_repetition_item_marker']) }}">
+                       name="{{ path_list_to_string(repetition_element.path + [loop.index, 'qpy_repetition_item_marker']) }}">
                 {{ create_elements(repetition) }}
                 <button class="repetition-button-delete" id="{{ repetition_element.id }}_delete_button"
                     name="{{ path_list_to_string(repetition_element.path) }}"

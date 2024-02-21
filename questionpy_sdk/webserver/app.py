@@ -83,7 +83,7 @@ async def submit_form(request: web.Request) -> web.Response:
             question = await worker.create_question_from_options(RequestUser(["de", "en"]), old_state,
                                                                  form_data=parsed_form_data)
         except WorkerUnknownError:
-            return HTTPBadRequest()
+            raise HTTPBadRequest()
 
     new_state = question.question_state
     webserver.state_storage.insert(webserver.package_location, json.loads(new_state))
@@ -109,7 +109,7 @@ async def repeat_element(request: web.Request) -> web.Response:
             question = await worker.create_question_from_options(RequestUser(["de", "en"]), old_state,
                                                                  form_data=old_form_data)
         except WorkerUnknownError:
-            return HTTPBadRequest()
+            raise HTTPBadRequest()
 
         new_state = question.question_state
         webserver.state_storage.insert(webserver.package_location, json.loads(new_state))

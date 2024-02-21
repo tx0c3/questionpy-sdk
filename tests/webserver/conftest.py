@@ -27,8 +27,8 @@ def sdk_web_server(request: pytest.FixtureRequest) -> Iterator[WebServer]:
 
 
 @pytest.fixture
-def port(aiohttp_unused_port: Callable) -> int:
-    return aiohttp_unused_port()
+def port(unused_tcp_port_factory: Callable) -> int:
+    return unused_tcp_port_factory()
 
 
 @pytest.fixture

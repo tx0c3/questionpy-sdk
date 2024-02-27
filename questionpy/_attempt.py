@@ -1,51 +1,47 @@
 from abc import ABC, abstractmethod
-from typing import ClassVar, Generic, TypeVar, Optional, TYPE_CHECKING
+from functools import cached_property
+from typing import ClassVar, Generic, TypeVar, Optional
 
-from pydantic import BaseModel
-from questionpy_common.api.attempt import BaseAttempt, AttemptScoredModel, ScoreModel
+import jinja2
+from pydantic import BaseModel, ConfigDict
+from questionpy_common.api.attempt import BaseAttempt, Score, AttemptModel, AttemptUi
 
-from ._util import get_type_arg
+from ._ui import create_jinja2_environment
 
-if TYPE_CHECKING:
-    from ._qtype import Question
+_Q = TypeVar("_Q", bound="Question")
+_S = TypeVar("_S", bound=Score)
+_AS = TypeVar("_AS", bound="BaseAttemptState")
 
 
 class BaseAttemptState(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     variant: int
 
 
-class BaseScoringState(BaseModel):
-    pass
+class Attempt(BaseAttempt, ABC, Generic[_Q, _S, _AS]):
+    score_class: ClassVar[type[_S]] = Score
+    state_class: ClassVar[type[_AS]] = BaseAttemptState
 
-
-_AS = TypeVar("_AS", bound=BaseAttemptState)
-_SS = TypeVar("_SS", bound=BaseScoringState)
-
-_Q = TypeVar("_Q", bound="Question")
-
-
-class Attempt(BaseAttempt, ABC, Generic[_Q, _AS, _SS]):
-    attempt_state_class: ClassVar[type[BaseAttemptState]] = BaseAttemptState
-    scoring_state_class: ClassVar[type[BaseScoringState]] = BaseScoringState
-
-    def __init__(self, question: _Q, attempt_state: _AS,
-                 response: Optional[dict] = None, scoring_state: Optional[_SS] = None) -> None:
+    def __init__(self, question: _Q, state: _AS, response: Optional[dict] = None, score: Optional[_S] = None) -> None:
         self.question = question
-        self.attempt_state = attempt_state
+        self.state = state
         self.response = response
-        self.scoring_state = scoring_state
+        self.score = score
 
     @abstractmethod
-    def export_score(self) -> ScoreModel:
+    def render_ui(self) -> AttemptUi:
         pass
 
-    def export_scored_attempt(self) -> AttemptScoredModel:
-        return AttemptScoredModel(**self.export().model_dump(), **self.export_score().model_dump())
+    @cached_property
+    def jinja2(self) -> jinja2.Environment:
+        return create_jinja2_environment(self, self.question, self.question.qtype)
+
+    def export(self) -> AttemptModel:
+        return AttemptModel(
+            variant=self.variant,
+            ui=self.render_ui()
+        )
 
     def export_attempt_state(self) -> str:
-        return self.attempt_state.model_dump_json()
-
-    def __init_subclass__(cls, *args: object, **kwargs: object) -> None:
-        super().__init_subclass__(*args, **kwargs)
-        cls.attempt_state_class = get_type_arg(cls, Attempt, 1, bound=BaseAttemptState, default=BaseAttemptState)
-        cls.scoring_state_class = get_type_arg(cls, Attempt, 2, bound=BaseScoringState, default=BaseScoringState)
+        return self.state.model_dump_json()

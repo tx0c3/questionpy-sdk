@@ -8,5 +8,6 @@ from questionpy_common.api.question import *  # noqa
 from questionpy_common.environment import *  # noqa
 from questionpy_common.manifest import Manifest, PackageType  # noqa
 
-from ._attempt import Attempt, BaseAttemptState, BaseScoringState  # noqa
+from ._attempt import Attempt, BaseAttemptState  # noqa
 from ._qtype import QuestionType, Question, BaseQuestionState  # noqa
+from ._ui import create_jinja2_environment  # noqa

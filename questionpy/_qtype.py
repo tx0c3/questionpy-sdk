@@ -3,60 +3,54 @@
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
 from abc import ABC
-from typing import Optional, Type, Generic, TypeVar, cast
+from typing import Optional, Type, Generic, TypeVar, cast, ClassVar
 
-from pydantic import BaseModel, ValidationError
-from questionpy_common.api.attempt import BaseAttempt
-from questionpy_common.api.qtype import BaseQuestionType, OptionsFormValidationError
+from pydantic import BaseModel, ConfigDict
+from questionpy_common.api.qtype import BaseQuestionType
 from questionpy_common.api.question import BaseQuestion
-from questionpy_common.environment import get_qpy_environment
 
 from ._attempt import Attempt
-from ._util import get_type_arg
 from .form import FormModel, OptionsFormDefinition
 
 _F = TypeVar("_F", bound=FormModel)
+_A = TypeVar("_A_co", bound=Attempt)
+_Q = TypeVar("_Q_co", bound="Question")
 _QS = TypeVar("_QS", bound="BaseQuestionState")
-_A = TypeVar("_A", bound=Attempt)
-_Q = TypeVar("_Q", bound="Question")
-
 
 class BaseQuestionState(BaseModel, Generic[_F]):
-    package_name: str
-    package_version: str
+    model_config = ConfigDict(extra='allow')
+
     options: _F
 
 
 class Question(BaseQuestion, ABC, Generic[_QS, _A]):
-    state_class: Type[BaseQuestionState] = BaseQuestionState
-    attempt_class: Type["Attempt"]
+    state_class: ClassVar[type[_QS]] = BaseQuestionState
+    attempt_class: ClassVar[type[_A]]
 
-    def __init__(self, state: _QS):
+    def __init__(self, qtype: BaseQuestionType, state: _QS) -> None:
+        self.qtype = qtype
         self.state = state
 
-    def start_attempt(self, variant: int) -> BaseAttempt:
-        attempt_state = self.attempt_class.attempt_state_class(variant=variant)
+    def start_attempt(self, variant: int) -> _A:
+        attempt_state = self.attempt_class.state_class(variant=variant)
         return self.attempt_class(self, attempt_state)
 
     def get_attempt(self, attempt_state: str, scoring_state: Optional[str] = None,
                     response: Optional[dict] = None, compute_score: bool = False,
-                    generate_hint: bool = False) -> BaseAttempt:
-        # TODO: Implement response.
-        attempt_state_obj = self.attempt_class.attempt_state_class.model_validate_json(attempt_state)
-        scoring_state_obj = None
-        if scoring_state is not None:
-            scoring_state_obj = self.attempt_class.scoring_state_class.model_validate_json(scoring_state)
-        return self.attempt_class(self, attempt_state_obj, response, scoring_state_obj)
+                    generate_hint: bool = False) -> _A:
+        parsed_state = self.attempt_class.state_class.model_validate_json(attempt_state)
+        parsed_score = self.attempt_class.score_class.model_validate_json(scoring_state) if scoring_state else None
 
-    def export_question_state(self) -> str:
-        return self.state.model_dump_json()
+        return self.attempt_class(question, parsed_state, response, parsed_score)
 
     def __init_subclass__(cls, *args: object, **kwargs: object) -> None:
         super().__init_subclass__(*args, **kwargs)
-        cls.state_class = get_type_arg(cls, Question, 0, bound=BaseQuestionState, default=BaseQuestionState)
-        if get_type_arg(cls, Question, 0) == BaseQuestionState:
-            raise TypeError(f"{cls.state_class.__name__} must declare a specific FormModel.")
-        cls.attempt_class = get_type_arg(cls, Question, 1, bound=Attempt)
+
+        if not hasattr(cls, "attempt_class") or not issubclass(cls.attempt_class, Attempt):
+            raise AttributeError("TODO")  # TODO
+
+    def export_question_state(self) -> str:
+        return self.state.model_dump_json()
 
 
 class QuestionType(BaseQuestionType, Generic[_F, _Q]):
@@ -70,66 +64,45 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
 
       >>> class MyOptions(FormModel): ...
       >>> class MyAttempt(Attempt): ...
-      >>> class MyQuestion(Question[BaseQuestionState[MyOptions], MyAttempt]): ...
+      >>> class MyQuestion(Question[DefaultQuestionState[MyOptions], MyAttempt]): ...
       >>> class MyQuestionType(QuestionType[MyOptions, MyQuestion]):
       ...   ...  # Your code goes here.
     """
 
-    # We'd declare these using _F and _Q ideally, but that leads to "Access to generic instance variables via class is
-    # ambiguous". And PEP 526 forbids TypeVars in ClassVars for some reason.
-    options_class: Type[FormModel] = FormModel
-    question_class: Type["Question"]
-
-    def __init__(self, options_class: Optional[Type[_F]] = None, question_class: Optional[Type[_Q]] = None) -> None:
-        """Initializes a new question.
-
-        Args:
-            options_class: Override the :class:`FormModel` for the question options.
-            question_class: Override the :class:`Question`-class used by this type.
-        """
-        if options_class:
-            self.options_class = options_class
-        if question_class:
-            self.question_class = question_class
+    options_class: Type[_F] = FormModel
+    question_class: Type[_Q]
 
     def __init_subclass__(cls, *args: object, **kwargs: object) -> None:
         super().__init_subclass__(*args, **kwargs)
 
-        cls.options_class = get_type_arg(cls, QuestionType, 0, bound=FormModel, default=FormModel)
-        cls.question_class = get_type_arg(cls, QuestionType, 1, bound=Question)
-        if cls.options_class != cls.question_class.state_class.model_fields['options'].annotation:
-            raise TypeError(
-                f"{cls.__name__} must have the same FormModel as {cls.question_class.state_class.__name__}.")
+        if not hasattr(cls, "question_class") or not issubclass(cls.question_class, Question):
+            raise RuntimeError("TODO")  # TODO
 
-    def get_options_form(self, question_state: Optional[str]) -> tuple[OptionsFormDefinition, dict[str, object]]:
-        if question_state:
-            question = self.create_question_from_state(question_state)
+    def get_options_form(self, question: Optional[_Q]) -> tuple[OptionsFormDefinition, dict[str, object]]:
+        if question:
             form_data = question.state.options.model_dump(mode="json")
         else:
             form_data = {}
 
         return (self.options_class.qpy_form, form_data)
 
-    def create_question_from_options(self, old_state: Optional[str], form_data: dict[str, object]) -> _Q:
+    def create_question_from_state(self, question_state: str) -> _Q:
+        state_class = self.question_class.state_class
+        if state_class is BaseQuestionState:
+            # If the question is using the default question state, the "options" attribute will deserialize to an empty
+            # FormModel, but we want the correct options class.
+            state_class = state_class[self.options_class]
+
+        parsed_state = self.question_class.state_class.model_validate_json(question_state)
+        return cast(_Q, self.question_class(self, parsed_state))
+
+    def create_question_from_options(self, form_data: dict[str, object], old_question: Optional[_Q] = None) -> _Q:
         try:
             parsed_form_data = self.options_class.model_validate(form_data)
         except ValidationError as e:
             error_dict = {".".join(map(str, error["loc"])): error["msg"] for error in e.errors()}
             raise OptionsFormValidationError(error_dict) from e
 
-        if old_state:
-            state = self.question_class.state_class.model_validate_json(old_state)
-            # TBD: Should we also update package_name and package_version here? Or check that they match?
-            state.options = parsed_form_data
-        else:
-            env = get_qpy_environment()
-            state = self.question_class.state_class(
-                package_name=f"{env.main_package.manifest.namespace}.{env.main_package.manifest.short_name}",
-                package_version=env.main_package.manifest.version,
-                options=parsed_form_data,
-            )
+        state = self.question_class.state_class(options=parsed_form_data)
 
-        return cast(_Q, self.question_class(state))
-
-    def create_question_from_state(self, question_state: str) -> _Q:
-        return cast(_Q, self.question_class(self.question_class.state_class.model_validate_json(question_state)))
+        return cast(_Q, self.question_class(self, state))

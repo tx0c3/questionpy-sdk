@@ -175,3 +175,7 @@ class FormModel(BaseModel, metaclass=_FormModelMeta):
 
     qpy_form: ClassVar[OptionsFormDefinition]
     """The form defined by this declarative model."""
+
+
+class EmptyFormModel(FormModel):
+    pass

@@ -1,3 +1,6 @@
+---
+title: questionpy
+---
 
 ::: questionpy._qtype
     options:

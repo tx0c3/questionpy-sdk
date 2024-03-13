@@ -1,0 +1,5 @@
+site_name: reference/sdk
+
+nav:
+  - questionpy.md
+  - questionpy_sdk.md

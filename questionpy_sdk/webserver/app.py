@@ -93,7 +93,7 @@ async def submit_form(request: web.Request) -> web.Response:
                 RequestUser(["de", "en"]), old_state, form_data=parsed_form_data
             )
         except WorkerUnknownError as exc:
-            raise HTTPBadRequest() from exc
+            raise HTTPBadRequest from exc
 
     new_state = question.question_state
     webserver.state_storage.insert(webserver.package_location, json.loads(new_state))
@@ -122,7 +122,7 @@ async def repeat_element(request: web.Request) -> web.Response:
                 RequestUser(["de", "en"]), old_state, form_data=old_form_data
             )
         except WorkerUnknownError as exc:
-            raise HTTPBadRequest() from exc
+            raise HTTPBadRequest from exc
 
         new_state = question.question_state
         webserver.state_storage.insert(webserver.package_location, json.loads(new_state))
@@ -167,7 +167,7 @@ async def get_attempt(request: web.Request) -> web.Response:
                     response=last_attempt_data,
                 )
             except WorkerUnknownError as exc:
-                raise HTTPBadRequest() from exc
+                raise HTTPBadRequest from exc
 
         if scoring_state:
             context = get_attempt_scored_context(attempt.ui, last_attempt_data, display_options, seed)
@@ -181,7 +181,7 @@ async def get_attempt(request: web.Request) -> web.Response:
                     request_user=RequestUser(["de", "en"]), question_state=question_state, variant=1
                 )
             except WorkerUnknownError as exc:
-                raise HTTPBadRequest() from exc
+                raise HTTPBadRequest from exc
         attempt_state = attempt_started.attempt_state
         context = get_attempt_started_context(attempt_started.ui, last_attempt_data, display_options, seed)
 

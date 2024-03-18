@@ -60,6 +60,12 @@ optional = true
 [tool.ruff]
 extend = "ruff_defaults.toml"
 
+[tool.ruff.lint.pep8-naming]
+extend-ignore-names = ["mcs"]
+
+[tool.ruff.lint.pylint]
+allow-dunder-method-names = ["__get_pydantic_core_schema__"]
+
 [tool.pytest.ini_options]
 addopts = "--doctest-modules"
 # https://github.com/pytest-dev/pytest-asyncio#auto-mode

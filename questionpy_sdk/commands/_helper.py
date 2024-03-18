@@ -58,17 +58,21 @@ def infer_package_kind(string: str) -> PackageLocation:
     if module_spec:
         return FunctionPackageLocation(module_name, function_name)
 
-    raise click.ClickException(f"'{string}' doesn't look like a QPy package zip file, directory or module")
+    msg = f"'{string}' doesn't look like a QPy package zip file, directory or module"
+    raise click.ClickException(msg)
 
 
 def read_yaml_config(path: Path) -> PackageConfig:
     if not path.is_file():
-        raise click.ClickException(f"The config '{path}' does not exist.")
+        msg = f"The config '{path}' does not exist."
+        raise click.ClickException(msg)
 
     with path.open() as config_f:
         try:
             return PackageConfig.model_validate(yaml.safe_load(config_f))
         except yaml.YAMLError as e:
-            raise click.ClickException(f"Failed to parse config '{path}': {e}")
+            msg = f"Failed to parse config '{path}': {e}"
+            raise click.ClickException(msg) from e
         except ValidationError as e:
-            raise click.ClickException(f"Invalid config '{path}': {e}")
+            msg = f"Invalid config '{path}': {e}"
+            raise click.ClickException(msg) from e

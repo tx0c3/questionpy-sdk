@@ -44,6 +44,7 @@ class Question(BaseQuestion, ABC, Generic[_QS, _A]):
         attempt_state: str,
         scoring_state: str | None = None,
         response: dict | None = None,
+        *,
         compute_score: bool = False,
         generate_hint: bool = False,
     ) -> BaseAttempt:
@@ -61,7 +62,8 @@ class Question(BaseQuestion, ABC, Generic[_QS, _A]):
         super().__init_subclass__(*args, **kwargs)
         cls.state_class = get_type_arg(cls, Question, 0, bound=BaseQuestionState, default=BaseQuestionState)
         if get_type_arg(cls, Question, 0) == BaseQuestionState:
-            raise TypeError(f"{cls.state_class.__name__} must declare a specific FormModel.")
+            msg = f"{cls.state_class.__name__} must declare a specific FormModel."
+            raise TypeError(msg)
         cls.attempt_class = get_type_arg(cls, Question, 1, bound=Attempt)
 
 
@@ -103,9 +105,8 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
         cls.options_class = get_type_arg(cls, QuestionType, 0, bound=FormModel, default=FormModel)
         cls.question_class = get_type_arg(cls, QuestionType, 1, bound=Question)
         if cls.options_class != cls.question_class.state_class.model_fields["options"].annotation:
-            raise TypeError(
-                f"{cls.__name__} must have the same FormModel as {cls.question_class.state_class.__name__}."
-            )
+            msg = f"{cls.__name__} must have the same FormModel as {cls.question_class.state_class.__name__}."
+            raise TypeError(msg)
 
     def get_options_form(self, question_state: str | None) -> tuple[OptionsFormDefinition, dict[str, object]]:
         if question_state:

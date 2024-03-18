@@ -19,7 +19,8 @@ from questionpy_sdk.package import PackageBuilder
 
 def validate_out_path(context: click.Context, _parameter: click.Parameter, value: Path | None) -> Path | None:
     if value and value.suffix != ".qpy":
-        raise click.BadParameter("Packages need the extension '.qpy'.", ctx=context)
+        msg = "Packages need the extension '.qpy'."
+        raise click.BadParameter(msg, ctx=context)
     return value
 
 
@@ -35,9 +36,10 @@ def package(source: Path, config_path: Path | None, out_path: Path | None) -> No
 
     if not out_path:
         out_path = Path(create_normalized_filename(config))
-    if out_path.exists():
-        if click.confirm(f"The path '{out_path}' already exists. Do you want to overwrite it?", abort=True):
-            out_path.unlink()
+    if out_path.exists() and click.confirm(
+        f"The path '{out_path}' already exists. Do you want to overwrite it?", abort=True
+    ):
+        out_path.unlink()
 
     try:
         with PackageBuilder(out_path) as out_file:
@@ -48,7 +50,8 @@ def package(source: Path, config_path: Path | None, out_path: Path | None) -> No
             out_file.write_manifest(config)
     except subprocess.CalledProcessError as e:
         out_path.unlink(missing_ok=True)
-        raise click.ClickException(f"Failed to install requirements: {e.stderr.decode()}")
+        msg = f"Failed to install requirements: {e.stderr.decode()}"
+        raise click.ClickException(msg) from e
 
     click.echo(f"Successfully created '{out_path}'.")
 

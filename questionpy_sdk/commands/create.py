@@ -31,7 +31,8 @@ def create(short_name: str, namespace: str, out_path: Path | None) -> None:
     if not out_path:
         out_path = Path(short_name)
     if out_path.exists():
-        raise click.ClickException(f"The path '{out_path}' already exists.")
+        msg = f"The path '{out_path}' already exists."
+        raise click.ClickException(msg)
 
     with ZipFile(EXAMPLE_PACKAGE) as zip_file:
         zip_file.extractall(out_path)

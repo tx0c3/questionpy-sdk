@@ -1,4 +1,4 @@
-"""This module contains DSL-like functions for defining the contents of :class:`FormModel`\\ s.
+r"""This module contains DSL-like functions for defining the contents of :class:`FormModel`\\ s.
 
 In order to allow for correct type inference of the resulting fields, most functions are typed to return what will later
 be part of the expected for data.
@@ -46,7 +46,6 @@ Todo:
 
 from typing import Any, Literal, Optional, TypeAlias, TypeVar, cast, overload
 
-from questionpy.form._model import FormModel, OptionEnum, _FieldInfo, _OptionInfo, _SectionInfo, _StaticElementInfo
 from questionpy_common.conditions import Condition, DoesNotEqual, Equals, In, IsChecked, IsNotChecked
 from questionpy_common.elements import (
     CheckboxElement,
@@ -59,6 +58,8 @@ from questionpy_common.elements import (
     StaticTextElement,
     TextInputElement,
 )
+
+from ._model import FormModel, OptionEnum, _FieldInfo, _OptionInfo, _SectionInfo, _StaticElementInfo
 
 __all__ = [
     "checkbox",
@@ -502,10 +503,7 @@ def select(
     default: object
     if multiple:
         expected_type = set[enum]  # type: ignore[valid-type]
-        if not required or disable_if or hide_if:
-            default = set()
-        else:
-            default = ...
+        default = set() if not required or disable_if or hide_if else ...
     elif not required or disable_if or hide_if:
         expected_type = Optional[enum]  # type: ignore[valid-type, assignment]
         default = None
@@ -529,7 +527,7 @@ def select(
     )
 
 
-def option(label: str, selected: bool = False) -> _OptionInfo:
+def option(label: str, *, selected: bool = False) -> _OptionInfo:
     """Adds an option to an ``OptionEnum``.
 
     Args:
@@ -754,7 +752,7 @@ def is_not_checked(name: str) -> IsNotChecked:
     return IsNotChecked(name=name)
 
 
-def equals(name: str, value: str | int | bool) -> Equals:
+def equals(name: str, *, value: str | int | bool) -> Equals:
     """Condition on the value of another field being equal to some static value.
 
     Many elements can be hidden or disabled client-side by passing conditions to ``hide_if`` or ``disable_if``. See the
@@ -770,12 +768,12 @@ def equals(name: str, value: str | int | bool) -> Equals:
     Examples:
         >>> class MyModel(FormModel):
         ...     email = text_input("Email address")
-        ...     send_spam = checkbox("Yes, send me lots of spam!", required=True, hide_if=equals("email", ""))
+        ...     send_spam = checkbox("Yes, send me lots of spam!", required=True, hide_if=equals("email", value=""))
     """
     return Equals(name=name, value=value)
 
 
-def does_not_equal(name: str, value: str | int | bool) -> DoesNotEqual:
+def does_not_equal(name: str, *, value: str | int | bool) -> DoesNotEqual:
     """Condition on the value of another field NOT being equal to some static value.
 
     Many elements can be hidden or disabled client-side by passing conditions to ``hide_if`` or ``disable_if``. See the
@@ -794,7 +792,7 @@ def does_not_equal(name: str, value: str | int | bool) -> DoesNotEqual:
         ...     warning = static_text(
         ...         "Warning",
         ...         "If you don't give us your email address, we can't send you any spam!",
-        ...         hide_if=does_not_equal("email", ""),
+        ...         hide_if=does_not_equal("email", value=""),
         ...     )
     """
     return DoesNotEqual(name=name, value=value)

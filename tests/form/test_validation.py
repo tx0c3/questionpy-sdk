@@ -23,7 +23,9 @@ def test_should_not_raise_when_form_is_valid() -> None:
         general=[CheckboxElement(name="chk1", hide_if=[is_checked("sect[chk2]")])],
         sections=[
             FormSection(
-                name="sect", header="", elements=[CheckboxElement(name="chk2", disable_if=[equals("..[chk1]", True)])]
+                name="sect",
+                header="",
+                elements=[CheckboxElement(name="chk2", disable_if=[equals("..[chk1]", value=True)])],
             )
         ],
     )
@@ -31,7 +33,7 @@ def test_should_not_raise_when_form_is_valid() -> None:
     validate_form(form)
 
 
-def test_should_raise_FormReferenceError_when_node_doesnt_exist() -> None:
+def test_should_raise_form_reference_error_when_node_doesnt_exist() -> None:
     form_definition = OptionsFormDefinition(
         general=[StaticTextElement(name="static", label="", text="", hide_if=[is_checked("sect[nonexistent]")])],
         sections=[FormSection(name="sect", header="", elements=[])],

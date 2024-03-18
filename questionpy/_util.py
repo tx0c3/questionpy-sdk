@@ -29,10 +29,7 @@ def get_type_arg(
     """
     # __orig_bases__ is only present when at least one base is a parametrized generic.
     # See PEP 560 https://peps.python.org/pep-0560/
-    if "__orig_bases__" in derived.__dict__:
-        bases = derived.__dict__["__orig_bases__"]
-    else:
-        bases = derived.__bases__
+    bases = derived.__dict__.get("__orig_bases__", derived.__bases__)
 
     for base in bases:
         origin = get_origin(base) or base
@@ -41,15 +38,16 @@ def get_type_arg(
             if not args or arg_index >= len(args):
                 # No type argument provided.
                 if default == "nodefault":
-                    raise TypeError(f"Missing type argument on {generic_base.__name__} (type arg #{arg_index})")
+                    msg = f"Missing type argument on {generic_base.__name__} (type arg #{arg_index})"
+                    raise TypeError(msg)
 
                 return default
 
             arg = args[arg_index]
             if not isinstance(arg, type) or not issubclass(arg, bound):
-                raise TypeError(
-                    f"Type parameter '{arg!r}' of {generic_base.__name__} is not a subclass of " f"{bound.__name__}"
-                )
+                msg = f"Type parameter '{arg!r}' of {generic_base.__name__} is not a subclass of {bound.__name__}"
+                raise TypeError(msg)
             return arg
 
-    raise TypeError(f"{derived.__name__} is not a direct subclass of {generic_base.__name__}")
+    msg = f"{derived.__name__} is not a direct subclass of {generic_base.__name__}"
+    raise TypeError(msg)

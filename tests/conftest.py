@@ -63,9 +63,6 @@ def create_package(
         if result.exit_code != 0:
             pytest.skip(f"Could not create the package: {result.stdout}")
 
-        if path.is_dir():
-            new_package_path = path / create_normalized_filename(config)
-        else:
-            new_package_path = path
+        new_package_path = path / create_normalized_filename(config) if path.is_dir() else path
         move(package_path, new_package_path)
         return new_package_path, config

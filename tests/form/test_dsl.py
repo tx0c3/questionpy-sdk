@@ -26,13 +26,13 @@ class NestedFormModel(form.FormModel):
     rep: list[SimpleFormModel] = form.repeat(SimpleFormModel, initial=1)
 
 
-def test_SimpleFormModel_should_render_correct_form() -> None:
+def test_simple_form_model_should_render_correct_form() -> None:
     assert SimpleFormModel.qpy_form == form.OptionsFormDefinition(
         general=[form.TextInputElement(name="input", label="My Text Input", required=True)]
     )
 
 
-def test_NestedFormModel_should_render_correct_form() -> None:
+def test_nested_form_model_should_render_correct_form() -> None:
     assert NestedFormModel.qpy_form == form.OptionsFormDefinition(
         general=[
             form.TextInputElement(name="general_field", label="General Text Input", required=False),
@@ -58,7 +58,7 @@ def test_NestedFormModel_should_render_correct_form() -> None:
     )
 
 
-def test_NestedFormModel_should_parse_correctly() -> None:
+def test_nested_form_model_should_parse_correctly() -> None:
     parsed = NestedFormModel(
         general_field="Valid value",
         sect=SimpleFormModel(input="Valid value"),
@@ -73,7 +73,7 @@ def test_NestedFormModel_should_parse_correctly() -> None:
     assert parsed.rep[0].input == "abcdefg"
 
 
-def test_should_raise_ValidationError_when_required_option_is_missing() -> None:
+def test_should_raise_validation_error_when_required_option_is_missing() -> None:
     with pytest.raises(ValidationError):
         SimpleFormModel.model_validate({})
 
@@ -239,7 +239,7 @@ def test_should_parse_correctly_when_input_is_valid(
         (SimpleFormModel, form.section("", SimpleFormModel), {}),
     ],
 )
-def test_should_raise_ValidationError_when_input_is_invalid(
+def test_should_raise_validation_error_when_input_is_invalid(
     annotation: object, initializer: object, input_value: object
 ) -> None:
     class TheModel(form.FormModel):
@@ -279,7 +279,7 @@ def test_should_raise_ValidationError_when_input_is_invalid(
         (dict, form.section("", SimpleFormModel)),
     ],
 )
-def test_should_raise_TypeError_when_annotation_is_wrong(annotation: object, initializer: object) -> None:
+def test_should_raise_type_error_when_annotation_is_wrong(annotation: object, initializer: object) -> None:
     with pytest.raises(TypeError):
 
         class TheModel(form.FormModel):
@@ -287,12 +287,12 @@ def test_should_raise_TypeError_when_annotation_is_wrong(annotation: object, ini
             field: annotation = initializer  # type: ignore[valid-type]
 
 
-def test_OptionEnum_should_serialize_to_value() -> None:
+def test_option_enum_should_serialize_to_value() -> None:
     type_adapter = TypeAdapter(MyOptionEnum)
     assert type_adapter.dump_json(MyOptionEnum.OPT_1) == b'"OPT_1"'
 
 
-def test_OptionEnum_should_deserialize_from_value() -> None:
+def test_option_enum_should_deserialize_from_value() -> None:
     type_adapter = TypeAdapter(MyOptionEnum)
     assert type_adapter.validate_python("OPT_1") is MyOptionEnum.OPT_1
     assert type_adapter.validate_json('"OPT_1"') is MyOptionEnum.OPT_1

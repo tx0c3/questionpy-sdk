@@ -96,7 +96,8 @@ class CxdCheckboxGroupElement(CheckboxGroupElement, _CxdFormElement):
         for checkbox in self.checkboxes:
             path = data.get("path")
             if not isinstance(path, list):
-                raise TypeError(f"Path should be of type list but is {type(path)}")
+                msg = f"Path should be of type list but is {type(path)}"
+                raise TypeError(msg)
             path.append(checkbox.name)
             self.cxd_checkboxes.append(CxdCheckboxElement(**checkbox.model_dump(), path=path))
             path.pop()

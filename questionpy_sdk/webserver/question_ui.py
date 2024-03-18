@@ -207,7 +207,7 @@ class QuestionUIRenderer:
         self, part: etree._Element, attempt: dict | None = None, options: QuestionDisplayOptions | None = None
     ) -> str:
         """Applies transformations to the descendants of a given node and returns the resulting HTML."""
-        newdoc = etree.ElementTree(etree.Element("div", nsmap={None: self.XHTML_NAMESPACE}))  # type: ignore
+        newdoc = etree.ElementTree(etree.Element("div", nsmap={None: self.XHTML_NAMESPACE}))  # type: ignore[dict-item]
         div = newdoc.getroot()
 
         for child in part:
@@ -254,7 +254,7 @@ class QuestionUIRenderer:
 
             raw_value = self.placeholders[key]
 
-            if clean_option.lower() not in ["clean", "noclean"]:
+            if clean_option.lower() not in {"clean", "noclean"}:
                 assert clean_option.lower() == "plain"
                 # Treat the value as plain text
                 root = etree.Element("string")
@@ -348,7 +348,7 @@ class QuestionUIRenderer:
 
             last_value = attempt.get(name)
             if last_value is not None:
-                if type_attr in ["checkbox", "radio"]:
+                if type_attr in {"checkbox", "radio"}:
                     if element.get("value") == last_value:
                         element.set("checked", "checked")
                 elif type_attr == "select":
@@ -358,7 +358,7 @@ class QuestionUIRenderer:
                         if opt_value == last_value:
                             option.set("selected", "selected")
                             break
-                elif type_attr not in ["button", "submit", "hidden"]:
+                elif type_attr not in {"button", "submit", "hidden"}:
                     element.set("value", last_value)
 
     def soften_validation(self, xpath: etree.XPathDocumentEvaluator) -> None:
@@ -451,7 +451,7 @@ class QuestionUIRenderer:
 
         # Remove attributes in the QuestionPy namespace
         for element in assert_element_list(xpath("//*")):
-            qpy_attributes = [attr for attr in element.attrib.keys() if attr.startswith(f"{{{self.QPY_NAMESPACE}}}")]  # type: ignore[arg-type]
+            qpy_attributes = [attr for attr in element.attrib if attr.startswith(f"{{{self.QPY_NAMESPACE}}}")]  # type: ignore[arg-type]
             for attr in qpy_attributes:
                 del element.attrib[attr]
 
@@ -518,10 +518,7 @@ class QuestionUIRenderer:
             precision = int(element.get("precision", -1))
             strip_zeroes = "strip-zeros" in element.attrib
 
-            if precision >= 0:
-                formatted_str = f"{float_val:.{precision}f}"
-            else:
-                formatted_str = str(float_val)
+            formatted_str = f"{float_val:.{precision}f}" if precision >= 0 else str(float_val)
 
             if strip_zeroes:
                 formatted_str = formatted_str.rstrip("0").rstrip(decimal_sep) if "." in formatted_str else formatted_str

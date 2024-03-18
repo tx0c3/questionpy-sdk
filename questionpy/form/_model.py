@@ -9,7 +9,7 @@ from itertools import starmap
 from typing import TYPE_CHECKING, Any, ClassVar, Literal, get_args, get_origin
 
 from pydantic import BaseModel, Field
-from pydantic._internal._model_construction import ModelMetaclass
+from pydantic._internal._model_construction import ModelMetaclass  # noqa: PLC2701
 from pydantic.fields import FieldInfo
 from pydantic_core import CoreSchema, core_schema
 
@@ -49,9 +49,11 @@ class OptionEnum(Enum):
                 try:
                     return cls[value]
                 except KeyError as e:
-                    raise ValueError(f"Not a valid {cls.__name__} value: '{value}'") from e
+                    msg = f"Not a valid {cls.__name__} value: '{value}'"
+                    raise ValueError(msg) from e
 
-            raise TypeError(f"str or {cls.__name__} required, got '{value}'")
+            msg = f"str or {cls.__name__} required, got '{value}'"
+            raise TypeError(msg)
 
         def serialize(enum_member: "OptionEnum") -> str:
             return enum_member.value
@@ -101,7 +103,7 @@ def _is_valid_annotation(annotation: object, expected: object) -> bool:
 
     if expected_origin is Literal and isinstance(annotation, type):
         # An annotation t and an expected type Literal[x] are valid if x is an instance of t
-        # Example: bool and Literal[True]
+        # (Example: bool and Literal[True])
         return isinstance(expected_args[0], annotation)
 
     if expected_origin and expected_origin is annotation_origin:
@@ -125,7 +127,7 @@ class _FormModelMeta(ModelMetaclass):
     __slots__ = ()
 
     # pylint: disable=signature-differs
-    def __new__(mcs, name: str, bases: tuple[type, ...], namespace: dict, **kwargs: Any) -> type:
+    def __new__(mcs, name: str, bases: tuple[type, ...], namespace: dict, **kwargs: Any) -> type:  # noqa: N804
         annotations = namespace.get("__annotations__", {}).copy()
         new_namespace = {}
         form = OptionsFormDefinition()
@@ -155,10 +157,11 @@ class _FormModelMeta(ModelMetaclass):
             if key in annotations:
                 # explicit type defined, check its validity
                 if not _is_valid_annotation(annotations[key], expected_type):
-                    raise TypeError(
+                    msg = (
                         f"The element '{key}' produces values of type '{expected_type}', but is annotated "
                         f"with '{annotations[key]}'"
                     )
+                    raise TypeError(msg)
             else:
                 # no explicit type defined, set the default
                 # this won't help type checkers or code completion, but will allow pydantic to validate inputs

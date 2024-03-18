@@ -95,7 +95,7 @@ def form_definition_fixture(repetition_element_fixture: RepetitionElement) -> Op
 
 
 def _substring_in_cxd_element(element: CxdFormElement | CxdOption, substring: str) -> bool:
-    for _, value in element.model_dump().items():
+    for value in element.model_dump().values():
         if not isinstance(value, str):
             continue
         if substring in value:

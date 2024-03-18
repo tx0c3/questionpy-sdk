@@ -79,7 +79,8 @@ def _contextualize_element(
         return cxd_rep_element
 
     if type(element) not in element_mapping:
-        raise ValueError(f"No corresponding CxdFormElement found for {type(element)}")
+        msg = f"No corresponding CxdFormElement found for {type(element)}"
+        raise ValueError(msg)
 
     cxd_element_class = element_mapping[type(element)]
     cxd_element = cxd_element_class(**element.model_dump(), path=path)

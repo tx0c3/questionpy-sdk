@@ -11,7 +11,7 @@ from zipfile import ZipFile
 from questionpy_sdk.resources import EXAMPLE_PACKAGE
 
 
-def create_example_zip():
+def create_example_zip() -> None:
     """Creates the example.zip required by the `create` command."""
     example = Path("example")
     with ZipFile(EXAMPLE_PACKAGE, "w") as zip_file:
@@ -19,7 +19,7 @@ def create_example_zip():
             zip_file.write(file, file.relative_to(example))
 
 
-def build(_setup_kwargs: Any):
+def build(_setup_kwargs: Any) -> None:
     create_example_zip()
 
 

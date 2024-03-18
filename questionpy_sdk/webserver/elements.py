@@ -45,7 +45,7 @@ class _CxdFormElement(BaseModel):
         """
 
     def add_form_data_value(self, element_form_data: Any) -> None:
-        """If there is prior form data available, this data is used to set the CxdFormElements value or 'selected' state.
+        """If there is prior form data available, this it is used to set the CxdFormElements value or 'selected' state.
 
         Args:
             element_form_data: Any form data fitting this CxdFormElement
@@ -194,7 +194,15 @@ class CxdRepetitionElement(RepetitionElement, _CxdFormElement):
 
 
 CxdFormElement: TypeAlias = Annotated[
-    CxdStaticTextElement | CxdTextInputElement | CxdCheckboxElement | CxdCheckboxGroupElement | CxdRadioGroupElement | CxdSelectElement | CxdHiddenElement | CxdGroupElement | CxdRepetitionElement,
+    CxdStaticTextElement
+    | CxdTextInputElement
+    | CxdCheckboxElement
+    | CxdCheckboxGroupElement
+    | CxdRadioGroupElement
+    | CxdSelectElement
+    | CxdHiddenElement
+    | CxdGroupElement
+    | CxdRepetitionElement,
     Field(discriminator="kind"),
 ]
 

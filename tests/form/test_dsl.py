@@ -7,52 +7,52 @@ from typing import Any, Literal, Optional
 import pytest
 from pydantic import TypeAdapter, ValidationError
 
-from questionpy.form import *  # pylint: disable=wildcard-import
+from questionpy import form
 
 
-class MyOptionEnum(OptionEnum):
-    OPT_1 = option("Label 1")
+class MyOptionEnum(form.OptionEnum):
+    OPT_1 = form.option("Label 1")
 
 
-class SimpleFormModel(FormModel):
-    input: str = text_input("My Text Input", required=True)
+class SimpleFormModel(form.FormModel):
+    input: str = form.text_input("My Text Input", required=True)
 
 
-class NestedFormModel(FormModel):
-    general_field: str | None = text_input("General Text Input")
+class NestedFormModel(form.FormModel):
+    general_field: str | None = form.text_input("General Text Input")
 
-    sect: SimpleFormModel = section("My Header", SimpleFormModel)
-    grp: SimpleFormModel = group("My Group", SimpleFormModel)
-    rep: list[SimpleFormModel] = repeat(SimpleFormModel, initial=1)
+    sect: SimpleFormModel = form.section("My Header", SimpleFormModel)
+    grp: SimpleFormModel = form.group("My Group", SimpleFormModel)
+    rep: list[SimpleFormModel] = form.repeat(SimpleFormModel, initial=1)
 
 
 def test_SimpleFormModel_should_render_correct_form() -> None:
-    assert SimpleFormModel.qpy_form == OptionsFormDefinition(
-        general=[TextInputElement(name="input", label="My Text Input", required=True)]
+    assert SimpleFormModel.qpy_form == form.OptionsFormDefinition(
+        general=[form.TextInputElement(name="input", label="My Text Input", required=True)]
     )
 
 
 def test_NestedFormModel_should_render_correct_form() -> None:
-    assert NestedFormModel.qpy_form == OptionsFormDefinition(
+    assert NestedFormModel.qpy_form == form.OptionsFormDefinition(
         general=[
-            TextInputElement(name="general_field", label="General Text Input", required=False),
-            GroupElement(
+            form.TextInputElement(name="general_field", label="General Text Input", required=False),
+            form.GroupElement(
                 name="grp",
                 label="My Group",
-                elements=[TextInputElement(name="input", label="My Text Input", required=True)],
+                elements=[form.TextInputElement(name="input", label="My Text Input", required=True)],
             ),
-            RepetitionElement(
+            form.RepetitionElement(
                 name="rep",
                 initial_repetitions=1,
                 increment=1,
-                elements=[TextInputElement(name="input", label="My Text Input", required=True)],
+                elements=[form.TextInputElement(name="input", label="My Text Input", required=True)],
             ),
         ],
         sections=[
-            FormSection(
+            form.FormSection(
                 name="sect",
                 header="My Header",
-                elements=[TextInputElement(name="input", label="My Text Input", required=True)],
+                elements=[form.TextInputElement(name="input", label="My Text Input", required=True)],
             )
         ],
     )
@@ -82,62 +82,62 @@ def test_should_raise_ValidationError_when_required_option_is_missing() -> None:
     "initializer,expected_elements",
     [
         (
-            text_input("Label", required=True, help="Help"),
-            [TextInputElement(name="field", label="Label", required=True, help="Help")],
+            form.text_input("Label", required=True, help="Help"),
+            [form.TextInputElement(name="field", label="Label", required=True, help="Help")],
         ),
         (
-            static_text("Label", "Lorem ipsum dolor sit amet.", help="Help"),
-            [StaticTextElement(name="field", label="Label", text="Lorem ipsum dolor sit amet.", help="Help")],
+            form.static_text("Label", "Lorem ipsum dolor sit amet.", help="Help"),
+            [form.StaticTextElement(name="field", label="Label", text="Lorem ipsum dolor sit amet.", help="Help")],
         ),
         (
-            checkbox("Left Label", "Right Label", required=True, help="Help"),
+            form.checkbox("Left Label", "Right Label", required=True, help="Help"),
             [
-                CheckboxElement(
+                form.CheckboxElement(
                     name="field", left_label="Left Label", right_label="Right Label", required=True, help="Help"
                 )
             ],
         ),
         (
-            radio_group("Label", MyOptionEnum, required=True, help="Help"),
+            form.radio_group("Label", MyOptionEnum, required=True, help="Help"),
             [
-                RadioGroupElement(
+                form.RadioGroupElement(
                     name="field",
                     label="Label",
-                    options=[Option(label="Label 1", value="OPT_1")],
+                    options=[form.Option(label="Label 1", value="OPT_1")],
                     required=True,
                     help="Help",
                 )
             ],
         ),
         (
-            select("Label", MyOptionEnum, required=True, multiple=True, help="Help"),
+            form.select("Label", MyOptionEnum, required=True, multiple=True, help="Help"),
             [
-                SelectElement(
+                form.SelectElement(
                     name="field",
                     label="Label",
-                    options=[Option(label="Label 1", value="OPT_1")],
+                    options=[form.Option(label="Label 1", value="OPT_1")],
                     required=True,
                     multiple=True,
                     help="Help",
                 )
             ],
         ),
-        (hidden("value"), [HiddenElement(name="field", value="value")]),
+        (form.hidden("value"), [form.HiddenElement(name="field", value="value")]),
         (
-            repeat(SimpleFormModel, initial=1),
+            form.repeat(SimpleFormModel, initial=1),
             [
-                RepetitionElement(
+                form.RepetitionElement(
                     name="field",
                     initial_repetitions=1,
                     increment=1,
-                    elements=[TextInputElement(name="input", label="My Text Input", required=True)],
+                    elements=[form.TextInputElement(name="input", label="My Text Input", required=True)],
                 )
             ],
         ),
     ],
 )
-def test_should_render_correct_form(initializer: object, expected_elements: list[FormElement]) -> None:
-    class TheModel(FormModel):
+def test_should_render_correct_form(initializer: object, expected_elements: list[form.FormElement]) -> None:
+    class TheModel(form.FormModel):
         # mypy crashes without the type annotation
         field: Any = initializer
 
@@ -148,57 +148,62 @@ def test_should_render_correct_form(initializer: object, expected_elements: list
     "annotation,initializer,input_value,expected_result",
     [
         # text_input
-        (str, text_input("", required=True), "valid", "valid"),
-        (str, text_input("", required=True), b"coercible", "coercible"),
-        (Optional[str], text_input(""), "valid", "valid"),
-        (Optional[str], text_input(""), None, None),
-        (Optional[str], text_input(""), ..., None),
+        (str, form.text_input("", required=True), "valid", "valid"),
+        (str, form.text_input("", required=True), b"coercible", "coercible"),
+        (Optional[str], form.text_input(""), "valid", "valid"),
+        (Optional[str], form.text_input(""), None, None),
+        (Optional[str], form.text_input(""), ..., None),
         # checkbox
-        (bool, checkbox("", "", required=True), True, True),
-        (bool, checkbox("", "", required=False), True, True),
-        (bool, checkbox("", "", required=False), False, False),
-        (bool, checkbox("", "", required=False), ..., False),
+        (bool, form.checkbox("", "", required=True), True, True),
+        (bool, form.checkbox("", "", required=False), True, True),
+        (bool, form.checkbox("", "", required=False), False, False),
+        (bool, form.checkbox("", "", required=False), ..., False),
         # radio_group
-        (Optional[MyOptionEnum], radio_group("", MyOptionEnum), ..., None),
-        (MyOptionEnum, radio_group("", MyOptionEnum, required=True), "OPT_1", MyOptionEnum.OPT_1),
+        (Optional[MyOptionEnum], form.radio_group("", MyOptionEnum), ..., None),
+        (MyOptionEnum, form.radio_group("", MyOptionEnum, required=True), "OPT_1", MyOptionEnum.OPT_1),
         (
             Optional[MyOptionEnum],
-            radio_group("", MyOptionEnum, required=True, disable_if=is_checked("field")),
+            form.radio_group("", MyOptionEnum, required=True, disable_if=form.is_checked("field")),
             "OPT_1",
             MyOptionEnum.OPT_1,
         ),
         # select
-        (MyOptionEnum, select("", MyOptionEnum, required=True, multiple=False), "OPT_1", MyOptionEnum.OPT_1),
-        (Optional[MyOptionEnum], select("", MyOptionEnum, required=False, multiple=False), ..., None),
+        (MyOptionEnum, form.select("", MyOptionEnum, required=True, multiple=False), "OPT_1", MyOptionEnum.OPT_1),
+        (Optional[MyOptionEnum], form.select("", MyOptionEnum, required=False, multiple=False), ..., None),
         (
             Optional[MyOptionEnum],
-            select("", MyOptionEnum, required=True, multiple=False, disable_if=is_checked("field")),
+            form.select("", MyOptionEnum, required=True, multiple=False, disable_if=form.is_checked("field")),
             ...,
             None,
         ),
-        (set[MyOptionEnum], select("", MyOptionEnum, required=False, multiple=True), ["OPT_1"], {MyOptionEnum.OPT_1}),
-        (set[MyOptionEnum], select("", MyOptionEnum, required=False, multiple=True), ..., set()),
+        (
+            set[MyOptionEnum],
+            form.select("", MyOptionEnum, required=False, multiple=True),
+            ["OPT_1"],
+            {MyOptionEnum.OPT_1},
+        ),
+        (set[MyOptionEnum], form.select("", MyOptionEnum, required=False, multiple=True), ..., set()),
         # hidden
-        (str, hidden("value"), "value", "value"),
-        (Literal["value"], hidden("value"), "value", "value"),
-        (Optional[Literal["value"]], hidden("value", disable_if=is_checked("field")), ..., None),
+        (str, form.hidden("value"), "value", "value"),
+        (Literal["value"], form.hidden("value"), "value", "value"),
+        (Optional[Literal["value"]], form.hidden("value", disable_if=form.is_checked("field")), ..., None),
         # group
-        (SimpleFormModel, group("", SimpleFormModel), {"input": "abc"}, SimpleFormModel(input="abc")),
+        (SimpleFormModel, form.group("", SimpleFormModel), {"input": "abc"}, SimpleFormModel(input="abc")),
         # repetition
         (
             list[SimpleFormModel],
-            repeat(SimpleFormModel, initial=1),
+            form.repeat(SimpleFormModel, initial=1),
             [{"input": "abc"}, {"input": "def"}],
             [SimpleFormModel(input="abc"), SimpleFormModel(input="def")],
         ),
         # section
-        (SimpleFormModel, section("", SimpleFormModel), {"input": "abc"}, SimpleFormModel(input="abc")),
+        (SimpleFormModel, form.section("", SimpleFormModel), {"input": "abc"}, SimpleFormModel(input="abc")),
     ],
 )
 def test_should_parse_correctly_when_input_is_valid(
     annotation: object, initializer: object, input_value: object, expected_result: object
 ) -> None:
-    class TheModel(FormModel):
+    class TheModel(form.FormModel):
         field: annotation = initializer  # type: ignore[valid-type]
 
     parsed = TheModel.model_validate({} if input_value is Ellipsis else {"field": input_value})
@@ -210,34 +215,34 @@ def test_should_parse_correctly_when_input_is_valid(
     "annotation,initializer,input_value",
     [
         # text_input
-        (str, text_input("", required=True), ...),
-        (str, text_input("", required=True), None),
-        (Optional[str], text_input(""), {}),
+        (str, form.text_input("", required=True), ...),
+        (str, form.text_input("", required=True), None),
+        (Optional[str], form.text_input(""), {}),
         # checkbox
-        (bool, checkbox("", "", required=False), 42),
+        (bool, form.checkbox("", "", required=False), 42),
         # radio_group
-        (Optional[MyOptionEnum], radio_group("", MyOptionEnum), "not an option"),
-        (MyOptionEnum, radio_group("", MyOptionEnum, required=True), ...),
+        (Optional[MyOptionEnum], form.radio_group("", MyOptionEnum), "not an option"),
+        (MyOptionEnum, form.radio_group("", MyOptionEnum, required=True), ...),
         # select
-        (Optional[MyOptionEnum], select("", MyOptionEnum), "not an option"),
-        (MyOptionEnum, select("", MyOptionEnum, required=True), ...),
-        (set[MyOptionEnum], select("", MyOptionEnum, multiple=True), ["not an option"]),
+        (Optional[MyOptionEnum], form.select("", MyOptionEnum), "not an option"),
+        (MyOptionEnum, form.select("", MyOptionEnum, required=True), ...),
+        (set[MyOptionEnum], form.select("", MyOptionEnum, multiple=True), ["not an option"]),
         # hidden
-        (Literal["value"], hidden("value"), "something else"),
-        (str, hidden("value"), ...),
+        (Literal["value"], form.hidden("value"), "something else"),
+        (str, form.hidden("value"), ...),
         # group
-        (SimpleFormModel, group("", SimpleFormModel), ...),
+        (SimpleFormModel, form.group("", SimpleFormModel), ...),
         # repetition
-        (list[SimpleFormModel], repeat(SimpleFormModel, initial=1), {"input": "def"}),
-        (list[SimpleFormModel], repeat(SimpleFormModel, initial=1), ...),
+        (list[SimpleFormModel], form.repeat(SimpleFormModel, initial=1), {"input": "def"}),
+        (list[SimpleFormModel], form.repeat(SimpleFormModel, initial=1), ...),
         # section
-        (SimpleFormModel, section("", SimpleFormModel), {}),
+        (SimpleFormModel, form.section("", SimpleFormModel), {}),
     ],
 )
 def test_should_raise_ValidationError_when_input_is_invalid(
     annotation: object, initializer: object, input_value: object
 ) -> None:
-    class TheModel(FormModel):
+    class TheModel(form.FormModel):
         field: annotation = initializer  # type: ignore[valid-type]
 
     with pytest.raises(ValidationError):
@@ -248,36 +253,36 @@ def test_should_raise_ValidationError_when_input_is_invalid(
     "annotation,initializer",
     [
         # text_input
-        (str, text_input("", required=False)),
-        (Optional[str], text_input("", required=True)),
-        (str, text_input("", required=True, disable_if=is_checked("field"))),  # Required, but conditional
+        (str, form.text_input("", required=False)),
+        (Optional[str], form.text_input("", required=True)),
+        (str, form.text_input("", required=True, disable_if=form.is_checked("field"))),  # Required, but conditional
         # checkbox
-        (str, checkbox("", "")),
+        (str, form.checkbox("", "")),
         # radio_group
-        (str, radio_group("", MyOptionEnum, required=True)),
-        (MyOptionEnum, radio_group("", MyOptionEnum)),
-        (Optional[MyOptionEnum], radio_group("", MyOptionEnum, required=True)),
+        (str, form.radio_group("", MyOptionEnum, required=True)),
+        (MyOptionEnum, form.radio_group("", MyOptionEnum)),
+        (Optional[MyOptionEnum], form.radio_group("", MyOptionEnum, required=True)),
         # select
-        (str, select("", MyOptionEnum, required=True)),
-        (set[MyOptionEnum], select("", MyOptionEnum)),
-        (set[MyOptionEnum], select("", MyOptionEnum, required=True)),
-        (MyOptionEnum, select("", MyOptionEnum, multiple=True)),
+        (str, form.select("", MyOptionEnum, required=True)),
+        (set[MyOptionEnum], form.select("", MyOptionEnum)),
+        (set[MyOptionEnum], form.select("", MyOptionEnum, required=True)),
+        (MyOptionEnum, form.select("", MyOptionEnum, multiple=True)),
         # hidden
-        (Optional[str], hidden("value")),
+        (Optional[str], form.hidden("value")),
         # group
-        (dict, group("", SimpleFormModel)),
+        (dict, form.group("", SimpleFormModel)),
         # repetition
-        (SimpleFormModel, repeat(SimpleFormModel, initial=1)),
-        (list, repeat(SimpleFormModel, initial=1)),
-        (list[str], repeat(SimpleFormModel, initial=1)),
+        (SimpleFormModel, form.repeat(SimpleFormModel, initial=1)),
+        (list, form.repeat(SimpleFormModel, initial=1)),
+        (list[str], form.repeat(SimpleFormModel, initial=1)),
         # section
-        (dict, section("", SimpleFormModel)),
+        (dict, form.section("", SimpleFormModel)),
     ],
 )
 def test_should_raise_TypeError_when_annotation_is_wrong(annotation: object, initializer: object) -> None:
     with pytest.raises(TypeError):
 
-        class TheModel(FormModel):
+        class TheModel(form.FormModel):
             # pylint: disable=unused-variable
             field: annotation = initializer  # type: ignore[valid-type]
 
@@ -294,11 +299,11 @@ def test_OptionEnum_should_deserialize_from_value() -> None:
 
 
 def test_group_without_required_fields_can_be_omitted() -> None:
-    class Inner(FormModel):
-        optional: str | None = text_input("")
+    class Inner(form.FormModel):
+        optional: str | None = form.text_input("")
 
-    class Outer(FormModel):
-        grp: Inner = group("", Inner)
+    class Outer(form.FormModel):
+        grp: Inner = form.group("", Inner)
 
     parsed = Outer.model_validate({})
     assert isinstance(parsed.grp, Inner)
@@ -306,11 +311,11 @@ def test_group_without_required_fields_can_be_omitted() -> None:
 
 
 def test_group_with_required_field_cannot_be_omitted() -> None:
-    class Inner(FormModel):
-        optional: str = text_input("", required=True)
+    class Inner(form.FormModel):
+        optional: str = form.text_input("", required=True)
 
-    class Outer(FormModel):
-        grp: Inner = group("", Inner)
+    class Outer(form.FormModel):
+        grp: Inner = form.group("", Inner)
 
     with pytest.raises(ValidationError):
         Outer.model_validate({})

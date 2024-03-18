@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from questionpy_sdk.webserver.question_ui import QuestionUIRenderer, QuestionMetadata, QuestionDisplayOptions
+from questionpy_sdk.webserver.question_ui import QuestionDisplayOptions, QuestionMetadata, QuestionUIRenderer
 from tests.webserver.conftest import compare_xhtml
 
 

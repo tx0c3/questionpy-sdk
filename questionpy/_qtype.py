@@ -3,9 +3,10 @@
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
 from abc import ABC
-from typing import Optional, Type, Generic, TypeVar, cast
+from typing import Generic, TypeVar, cast
 
 from pydantic import BaseModel, ValidationError
+
 from questionpy_common.api.attempt import BaseAttempt
 from questionpy_common.api.qtype import BaseQuestionType, OptionsFormValidationError
 from questionpy_common.api.question import BaseQuestion
@@ -28,8 +29,8 @@ class BaseQuestionState(BaseModel, Generic[_F]):
 
 
 class Question(BaseQuestion, ABC, Generic[_QS, _A]):
-    state_class: Type[BaseQuestionState] = BaseQuestionState
-    attempt_class: Type["Attempt"]
+    state_class: type[BaseQuestionState] = BaseQuestionState
+    attempt_class: type["Attempt"]
 
     def __init__(self, state: _QS):
         self.state = state
@@ -41,8 +42,8 @@ class Question(BaseQuestion, ABC, Generic[_QS, _A]):
     def get_attempt(
         self,
         attempt_state: str,
-        scoring_state: Optional[str] = None,
-        response: Optional[dict] = None,
+        scoring_state: str | None = None,
+        response: dict | None = None,
         compute_score: bool = False,
         generate_hint: bool = False,
     ) -> BaseAttempt:
@@ -81,10 +82,10 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
 
     # We'd declare these using _F and _Q ideally, but that leads to "Access to generic instance variables via class is
     # ambiguous". And PEP 526 forbids TypeVars in ClassVars for some reason.
-    options_class: Type[FormModel] = FormModel
-    question_class: Type["Question"]
+    options_class: type[FormModel] = FormModel
+    question_class: type["Question"]
 
-    def __init__(self, options_class: Optional[Type[_F]] = None, question_class: Optional[Type[_Q]] = None) -> None:
+    def __init__(self, options_class: type[_F] | None = None, question_class: type[_Q] | None = None) -> None:
         """Initializes a new question.
 
         Args:
@@ -106,7 +107,7 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
                 f"{cls.__name__} must have the same FormModel as {cls.question_class.state_class.__name__}."
             )
 
-    def get_options_form(self, question_state: Optional[str]) -> tuple[OptionsFormDefinition, dict[str, object]]:
+    def get_options_form(self, question_state: str | None) -> tuple[OptionsFormDefinition, dict[str, object]]:
         if question_state:
             question = self.create_question_from_state(question_state)
             form_data = question.state.options.model_dump(mode="json")
@@ -115,7 +116,7 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
 
         return (self.options_class.qpy_form, form_data)
 
-    def create_question_from_options(self, old_state: Optional[str], form_data: dict[str, object]) -> _Q:
+    def create_question_from_options(self, old_state: str | None, form_data: dict[str, object]) -> _Q:
         try:
             parsed_form_data = self.options_class.model_validate(form_data)
         except ValidationError as e:

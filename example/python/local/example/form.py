@@ -1,17 +1,17 @@
 from questionpy.form import (
     FormModel,
-    text_input,
     OptionEnum,
-    option,
-    select,
-    group,
-    static_text,
-    is_checked,
     checkbox,
-    radio_group,
+    group,
     hidden,
-    repeat,
+    is_checked,
     is_not_checked,
+    option,
+    radio_group,
+    repeat,
+    select,
+    static_text,
+    text_input,
 )
 
 

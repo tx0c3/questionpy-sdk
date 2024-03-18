@@ -3,7 +3,6 @@
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
 from questionpy_common.manifest import Manifest
-
 from questionpy_sdk.models import PackageConfig
 
 

@@ -4,7 +4,7 @@
 
 import json
 from pathlib import Path
-from typing import Optional, Any, Union
+from typing import Any
 
 from questionpy_server.worker.runtime.package_location import PackageLocation
 
@@ -46,7 +46,7 @@ def _unflatten(flat_form_data: dict[str, str]) -> dict[str, Any]:
     return result
 
 
-def _convert_repetition_dict_to_list(dictionary: dict[str, Any]) -> Union[dict[str, Any], list[Any]]:
+def _convert_repetition_dict_to_list(dictionary: dict[str, Any]) -> dict[str, Any] | list[Any]:
     """Recursively transforms a dict with only numerical keys to a list."""
     if not isinstance(dictionary, dict):
         return dictionary
@@ -67,6 +67,7 @@ def parse_form_data(form_data: dict) -> dict:
     This function parses a dictionary, where the keys are the references to the Form Element from the Options Form.
     The references are used to create a nested dictionary with the form data. Elements in the 'general' section are
     moved to the root of the dictionary.
+
     Example:
         This::
 
@@ -85,7 +86,7 @@ def parse_form_data(form_data: dict) -> dict:
     unflattened_form_data = _unflatten(form_data)
     options = unflattened_form_data.get("general", {})
     for section_name, section in unflattened_form_data.items():
-        if not section_name == "general":
+        if section_name != "general":
             options[section_name] = section
     return options
 
@@ -132,7 +133,7 @@ class QuestionStateStorage:
         with path.open("w") as file:
             json.dump(question_state, file, indent=2)
 
-    def get(self, key: PackageLocation) -> Optional[dict]:
+    def get(self, key: PackageLocation) -> dict | None:
         if str(key) in self.paths:
             path = self.paths.get(str(key))
             if path and path.exists():

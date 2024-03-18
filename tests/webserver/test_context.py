@@ -3,34 +3,32 @@
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
 from itertools import chain
-from typing import Union
 
 import pytest
 from _pytest.fixtures import SubRequest
 
 from questionpy_common.elements import (
     CheckboxElement,
-    FormSection,
-    StaticTextElement,
-    RepetitionElement,
-    TextInputElement,
     CheckboxGroupElement,
-    Option,
-    RadioGroupElement,
-    SelectElement,
-    GroupElement,
-    OptionsFormDefinition,
     FormElement,
+    FormSection,
+    GroupElement,
+    Option,
+    OptionsFormDefinition,
+    RadioGroupElement,
+    RepetitionElement,
+    SelectElement,
+    StaticTextElement,
+    TextInputElement,
 )
-
-from questionpy_sdk.webserver.context import contextualize, CxdFormElement
+from questionpy_sdk.webserver.context import CxdFormElement, contextualize
 from questionpy_sdk.webserver.elements import (
-    CxdRepetitionElement,
+    CxdCheckboxGroupElement,
     CxdGroupElement,
     CxdOption,
     CxdRadioGroupElement,
+    CxdRepetitionElement,
     CxdSelectElement,
-    CxdCheckboxGroupElement,
 )
 
 
@@ -96,7 +94,7 @@ def form_definition_fixture(repetition_element_fixture: RepetitionElement) -> Op
     )
 
 
-def _substring_in_cxd_element(element: Union[CxdFormElement, CxdOption], substring: str) -> bool:
+def _substring_in_cxd_element(element: CxdFormElement | CxdOption, substring: str) -> bool:
     for _, value in element.model_dump().items():
         if not isinstance(value, str):
             continue

@@ -9,7 +9,6 @@ from zipfile import ZipFile
 from questionpy_common.constants import MANIFEST_FILENAME
 from questionpy_sdk.models import PackageConfig
 
-
 log = logging.getLogger(__name__)
 
 

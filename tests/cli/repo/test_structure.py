@@ -9,7 +9,7 @@ from click.testing import CliRunner
 
 from questionpy_sdk.commands._helper import create_normalized_filename
 from questionpy_sdk.commands.repo.structure import structure
-from tests.conftest import create_package, assert_same_structure
+from tests.conftest import assert_same_structure, create_package
 
 
 def test_structure_no_arguments_raises_error() -> None:

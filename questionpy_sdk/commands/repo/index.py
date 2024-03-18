@@ -6,7 +6,7 @@ from pathlib import Path
 
 import click
 
-from questionpy_sdk.commands.repo._helper import get_manifest, IndexCreator
+from questionpy_sdk.commands.repo._helper import IndexCreator, get_manifest
 
 
 @click.command()

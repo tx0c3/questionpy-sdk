@@ -9,9 +9,8 @@ import click
 
 from questionpy_sdk.commands.create import create
 from questionpy_sdk.commands.package import package
-from questionpy_sdk.commands.run import run
-
 from questionpy_sdk.commands.repo import repo
+from questionpy_sdk.commands.run import run
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})

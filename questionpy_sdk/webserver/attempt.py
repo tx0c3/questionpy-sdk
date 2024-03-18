@@ -3,8 +3,7 @@
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
 from questionpy_common.api.attempt import AttemptUi
-
-from questionpy_sdk.webserver.question_ui import QuestionUIRenderer, QuestionDisplayOptions
+from questionpy_sdk.webserver.question_ui import QuestionDisplayOptions, QuestionUIRenderer
 
 
 def get_attempt_started_context(

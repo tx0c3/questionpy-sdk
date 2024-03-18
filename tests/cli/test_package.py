@@ -18,9 +18,7 @@ from questionpy_sdk.resources import EXAMPLE_PACKAGE
 
 
 def create_config(source: Path) -> PackageConfig:
-    """
-    Creates a config in the given `source` directory.
-    """
+    """Creates a config in the given `source` directory."""
     config = PackageConfig(short_name="short_name", author="pytest", api_version="0.1", version="0.1.0")
     with (source / PACKAGE_CONFIG_FILENAME).open("w") as file:
         yaml.dump(config.model_dump(exclude={"type"}), file)
@@ -28,9 +26,7 @@ def create_config(source: Path) -> PackageConfig:
 
 
 def create_source_directory(root: Path, directory_name: str) -> PackageConfig:
-    """
-    Creates a source directory with a config in the given `root` directory.
-    """
+    """Creates a source directory with a config in the given `root` directory."""
     source = root / directory_name
     source.mkdir()
     return create_config(source)

@@ -2,27 +2,26 @@
 #  QuestionPy is free software released under terms of the MIT license. See LICENSE.md.
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
-from re import sub, Pattern
-from typing import List, Union, Annotated, Any, Optional
-from typing_extensions import TypeAlias
-from pydantic import Field, BaseModel, computed_field
+from re import Pattern, sub
+from typing import Annotated, Any, TypeAlias
 
-from questionpy_common.elements import (
-    StaticTextElement,
-    GroupElement,
-    HiddenElement,
-    RepetitionElement,
-    SelectElement,
-    RadioGroupElement,
-    Option,
-    CheckboxGroupElement,
-    CheckboxElement,
-    TextInputElement,
-    FormSection,
-)
+from pydantic import BaseModel, Field, computed_field
 
 # pylint: disable=unused-import
-from questionpy_common.elements import FormElement  # noqa: F401
+from questionpy_common.elements import (
+    CheckboxElement,
+    CheckboxGroupElement,
+    FormElement,  # noqa: F401
+    FormSection,
+    GroupElement,
+    HiddenElement,
+    Option,
+    RadioGroupElement,
+    RepetitionElement,
+    SelectElement,
+    StaticTextElement,
+    TextInputElement,
+)
 
 
 class _CxdFormElement(BaseModel):
@@ -33,8 +32,7 @@ class _CxdFormElement(BaseModel):
         return "_".join(self.path)
 
     def contextualize(self, pattern: Pattern[str], replacement: str) -> None:
-        """
-        QuestionPy FormElements can contain a Pattern in their model fields which is replaced with a value when
+        """QuestionPy FormElements can contain a Pattern in their model fields which is replaced with a value when
         the OptionsForm is presented to add additional context for the user.
         Replaces the QPy pattern with the replacement string in model fields which can contain such a pattern.
 
@@ -47,8 +45,7 @@ class _CxdFormElement(BaseModel):
         """
 
     def add_form_data_value(self, element_form_data: Any) -> None:
-        """
-        If there is prior form data available, this data is used to set the CxdFormElements value or 'selected' state.
+        """If there is prior form data available, this data is used to set the CxdFormElements value or 'selected' state.
 
         Args:
             element_form_data: Any form data fitting this CxdFormElement
@@ -59,7 +56,7 @@ class _CxdFormElement(BaseModel):
 
 
 class CxdTextInputElement(TextInputElement, _CxdFormElement):
-    value: Optional[str] = None
+    value: str | None = None
 
     def contextualize(self, pattern: Pattern[str], replacement: str) -> None:
         self.label = sub(pattern, replacement, self.label)
@@ -92,7 +89,7 @@ class CxdCheckboxElement(CheckboxElement, _CxdFormElement):
 
 
 class CxdCheckboxGroupElement(CheckboxGroupElement, _CxdFormElement):
-    cxd_checkboxes: List[CxdCheckboxElement] = []
+    cxd_checkboxes: list[CxdCheckboxElement] = []
 
     def __init__(self, **data: Any):
         super().__init__(**data)
@@ -123,7 +120,7 @@ class CxdOption(Option, _CxdFormElement):
 
 
 class CxdRadioGroupElement(RadioGroupElement, _CxdFormElement):
-    cxd_options: List[CxdOption] = []
+    cxd_options: list[CxdOption] = []
 
     def __init__(self, **data: Any):
         super().__init__(**data)
@@ -150,7 +147,7 @@ class CxdRadioGroupElement(RadioGroupElement, _CxdFormElement):
 
 
 class CxdSelectElement(SelectElement, _CxdFormElement):
-    cxd_options: List[CxdOption] = []
+    cxd_options: list[CxdOption] = []
 
     def __init__(self, **data: Any):
         super().__init__(**data)
@@ -183,7 +180,7 @@ class CxdHiddenElement(HiddenElement, _CxdFormElement):
 
 
 class CxdGroupElement(GroupElement, _CxdFormElement):
-    cxd_elements: List["CxdFormElement"] = []
+    cxd_elements: list["CxdFormElement"] = []
 
     def __init__(self, **data: Any):
         super().__init__(**data, elements=[])
@@ -197,28 +194,18 @@ class CxdRepetitionElement(RepetitionElement, _CxdFormElement):
 
 
 CxdFormElement: TypeAlias = Annotated[
-    Union[
-        CxdStaticTextElement,
-        CxdTextInputElement,
-        CxdCheckboxElement,
-        CxdCheckboxGroupElement,
-        CxdRadioGroupElement,
-        CxdSelectElement,
-        CxdHiddenElement,
-        CxdGroupElement,
-        CxdRepetitionElement,
-    ],
+    CxdStaticTextElement | CxdTextInputElement | CxdCheckboxElement | CxdCheckboxGroupElement | CxdRadioGroupElement | CxdSelectElement | CxdHiddenElement | CxdGroupElement | CxdRepetitionElement,
     Field(discriminator="kind"),
 ]
 
 
 class CxdFormSection(FormSection):
-    cxd_elements: List[CxdFormElement] = []
+    cxd_elements: list[CxdFormElement] = []
     """Elements contained in the section."""
 
 
 class CxdOptionsFormDefinition(BaseModel):
-    general: List[CxdFormElement] = []
+    general: list[CxdFormElement] = []
     """Elements to add to the main section, after the LMS' own elements."""
-    sections: List[CxdFormSection] = []
+    sections: list[CxdFormSection] = []
     """Sections to add after the main section."""

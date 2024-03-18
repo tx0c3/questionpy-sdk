@@ -4,26 +4,26 @@
 import json
 from collections.abc import Generator
 from types import SimpleNamespace
-from typing import Optional, cast
+from typing import cast
 
 import pytest
+
+from questionpy import (
+    Attempt,
+    BaseAttemptState,
+    BaseQuestionState,
+    BaseScoringState,
+    Environment,
+    Question,
+    QuestionType,
+    RequestUser,
+)
+from questionpy.form import FormModel, text_input
 from questionpy_common.api.attempt import AttemptModel, AttemptUi, ScoreModel, ScoringCode
 from questionpy_common.api.question import QuestionModel, ScoringMethod
 from questionpy_common.environment import set_qpy_environment
 from questionpy_server.worker.runtime.manager import EnvironmentImpl
 from questionpy_server.worker.runtime.package import ImportablePackage
-
-from questionpy import (
-    QuestionType,
-    Question,
-    BaseQuestionState,
-    Attempt,
-    BaseAttemptState,
-    Environment,
-    RequestUser,
-    BaseScoringState,
-)
-from questionpy.form import FormModel, text_input
 
 
 @pytest.fixture(autouse=True)
@@ -47,7 +47,7 @@ def environment() -> Generator[Environment, None, None]:
 
 
 class SomeModel(FormModel):
-    input: Optional[str] = text_input("Some Label")
+    input: str | None = text_input("Some Label")
 
 
 class MyQuestionState(BaseQuestionState[SomeModel]):

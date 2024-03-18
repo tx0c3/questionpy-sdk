@@ -3,14 +3,14 @@
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
 from bisect import insort
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from gzip import open as gzip_open
 from pathlib import Path
 from zipfile import ZipFile
 
 from questionpy_common.constants import MANIFEST_FILENAME
 from questionpy_server.misc import calculate_hash
-from questionpy_server.repository.models import RepoPackageVersions, RepoPackageVersion, RepoMeta, RepoPackageIndex
+from questionpy_server.repository.models import RepoMeta, RepoPackageIndex, RepoPackageVersion, RepoPackageVersions
 from questionpy_server.utils.manifest import ComparableManifest
 
 
@@ -91,7 +91,7 @@ class IndexCreator:
         index_path = self._root / "PACKAGES.json.gz"
         meta = RepoMeta(
             repository_schema_version=1,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             sha256=calculate_hash(index_path),
             size=index_path.stat().st_size,
         )

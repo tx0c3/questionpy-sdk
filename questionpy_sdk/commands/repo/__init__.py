@@ -4,8 +4,8 @@
 
 import click
 
-from questionpy_sdk.commands.repo.structure import structure
 from questionpy_sdk.commands.repo.index import index
+from questionpy_sdk.commands.repo.structure import structure
 
 
 @click.group()

@@ -5,6 +5,7 @@
 import json
 import random
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import aiohttp_jinja2
 from aiohttp import web
@@ -12,7 +13,6 @@ from aiohttp.web_exceptions import HTTPBadRequest
 from jinja2 import FileSystemLoader
 
 from questionpy_common.constants import MiB
-from questionpy_common.elements import OptionsFormDefinition
 from questionpy_common.environment import RequestUser
 from questionpy_sdk.webserver.attempt import get_attempt_scored_context, get_attempt_started_context
 from questionpy_sdk.webserver.context import contextualize
@@ -21,8 +21,11 @@ from questionpy_sdk.webserver.state_storage import QuestionStateStorage, add_rep
 from questionpy_server import WorkerPool
 from questionpy_server.worker.runtime.messages import WorkerUnknownError
 from questionpy_server.worker.runtime.package_location import PackageLocation
-from questionpy_server.worker.worker import Worker
 from questionpy_server.worker.worker.thread import ThreadWorker
+
+if TYPE_CHECKING:
+    from questionpy_common.elements import OptionsFormDefinition
+    from questionpy_server.worker.worker import Worker
 
 routes = web.RouteTableDef()
 

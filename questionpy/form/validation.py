@@ -11,8 +11,19 @@ from itertools import chain
 from typing import Union, Sequence, Optional
 
 from questionpy_common.conditions import IsChecked, IsNotChecked, Equals, DoesNotEqual, In
-from questionpy_common.elements import OptionsFormDefinition, FormSection, GroupElement, RepetitionElement, \
-    FormElement, CanHaveConditions, CheckboxElement, TextInputElement, RadioGroupElement, SelectElement, HiddenElement
+from questionpy_common.elements import (
+    OptionsFormDefinition,
+    FormSection,
+    GroupElement,
+    RepetitionElement,
+    FormElement,
+    CanHaveConditions,
+    CheckboxElement,
+    TextInputElement,
+    RadioGroupElement,
+    SelectElement,
+    HiddenElement,
+)
 from typing_extensions import TypeAlias
 
 _FormNode: TypeAlias = Union[OptionsFormDefinition, FormSection, FormElement]
@@ -20,6 +31,7 @@ _FormNode: TypeAlias = Union[OptionsFormDefinition, FormSection, FormElement]
 
 class FormError(Exception):
     """A node in the form failed validation."""
+
     def __init__(self, node: str, message: str):
         self.node = node
         """Absolute name of the form node that caused the error."""
@@ -28,6 +40,7 @@ class FormError(Exception):
 
 class FormReferenceError(FormError):
     """A node in the form failed validation because it references a nonexistent element."""
+
     def __init__(self, node: str, reference: str, container_name: Optional[str], local_name: str):
         self.reference = reference
         """Full reference that could not be resolved."""
@@ -105,7 +118,7 @@ _valid_referents: dict[type, tuple[type, ...]] = {
     IsNotChecked: (CheckboxElement,),
     Equals: (TextInputElement, CheckboxElement, RadioGroupElement, SelectElement, HiddenElement),
     DoesNotEqual: (TextInputElement, CheckboxElement, RadioGroupElement, SelectElement, HiddenElement),
-    In: (TextInputElement, CheckboxElement, RadioGroupElement, SelectElement, HiddenElement)
+    In: (TextInputElement, CheckboxElement, RadioGroupElement, SelectElement, HiddenElement),
 }
 
 
@@ -120,8 +133,11 @@ def _validate_node(node: _FormNode, parents: Sequence[_FormNode]) -> None:
             valid_targets = _valid_referents[type(condition)]
             if not isinstance(target, valid_targets):
                 valid_targets_str = ", ".join(klass.__name__ for klass in valid_targets)
-                raise FormError(abs_name, f"{type(condition).__name__} condition referent is {type(target).__name__} "
-                                          f"but must be one of {valid_targets_str}")
+                raise FormError(
+                    abs_name,
+                    f"{type(condition).__name__} condition referent is {type(target).__name__} "
+                    f"but must be one of {valid_targets_str}",
+                )
 
     children = _get_children(node)
     for child in children:

@@ -12,7 +12,7 @@ from questionpy_sdk.resources import EXAMPLE_PACKAGE
 
 
 def create_example_zip():
-    """ Creates the example.zip required by the `create` command."""
+    """Creates the example.zip required by the `create` command."""
     example = Path("example")
     with ZipFile(EXAMPLE_PACKAGE, "w") as zip_file:
         for file in example.rglob("*"):
@@ -23,5 +23,5 @@ def build(_setup_kwargs: Any):
     create_example_zip()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     build({})

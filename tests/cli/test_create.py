@@ -67,15 +67,7 @@ def test_create_with_out_path() -> None:
         assert out_path.exists()
 
 
-@pytest.mark.parametrize("short_name", [
-    "default",
-    "a_name",
-    "_name",
-    "name_",
-    "_name_",
-    "_a_name_",
-    "a" * 127
-])
+@pytest.mark.parametrize("short_name", ["default", "a_name", "_name", "name_", "_name_", "_a_name_", "a" * 127])
 def test_create_with_valid_short_name(short_name: str) -> None:
     runner = CliRunner()
     with runner.isolated_filesystem() as directory:
@@ -84,22 +76,25 @@ def test_create_with_valid_short_name(short_name: str) -> None:
         assert Path(directory, short_name).exists()
 
 
-@pytest.mark.parametrize("short_name", [
-    "",
-    "notValid",
-    "not_valid ",
-    "not-valid",
-    "not~valid",
-    "not valid",
-    "\u03c0",
-    "a" * 128,
-    "42",
-    "def",
-    "class",
-    "global",
-    "match",
-    "_"
-])
+@pytest.mark.parametrize(
+    "short_name",
+    [
+        "",
+        "notValid",
+        "not_valid ",
+        "not-valid",
+        "not~valid",
+        "not valid",
+        "\u03c0",
+        "a" * 128,
+        "42",
+        "def",
+        "class",
+        "global",
+        "match",
+        "_",
+    ],
+)
 def test_create_with_invalid_short_name(short_name: str) -> None:
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -108,15 +103,7 @@ def test_create_with_invalid_short_name(short_name: str) -> None:
         assert "Error: Invalid value for 'SHORT_NAME': " in result.stdout
 
 
-@pytest.mark.parametrize("namespace", [
-    "default",
-    "a_name",
-    "_name",
-    "name_",
-    "_name_",
-    "_a_name_",
-    "a" * 127
-])
+@pytest.mark.parametrize("namespace", ["default", "a_name", "_name", "name_", "_name_", "_a_name_", "a" * 127])
 def test_create_with_valid_namespace(namespace: str) -> None:
     runner = CliRunner()
     with runner.isolated_filesystem() as directory:
@@ -125,22 +112,25 @@ def test_create_with_valid_namespace(namespace: str) -> None:
         assert Path(directory, "short_name").exists()
 
 
-@pytest.mark.parametrize("namespace", [
-    "",
-    "notValid",
-    "not_valid ",
-    "not-valid",
-    "not~valid",
-    "not valid",
-    "\u03c0",
-    "a" * 128,
-    "42",
-    "def",
-    "class",
-    "global",
-    "match",
-    "_"
-])
+@pytest.mark.parametrize(
+    "namespace",
+    [
+        "",
+        "notValid",
+        "not_valid ",
+        "not-valid",
+        "not~valid",
+        "not valid",
+        "\u03c0",
+        "a" * 128,
+        "42",
+        "def",
+        "class",
+        "global",
+        "match",
+        "_",
+    ],
+)
 def test_create_with_invalid_namespace(namespace: str) -> None:
     runner = CliRunner()
     with runner.isolated_filesystem():

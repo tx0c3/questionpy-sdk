@@ -10,17 +10,27 @@ from tests.webserver.conftest import compare_xhtml
 
 
 def test_should_extract_correct_metadata() -> None:
-    metadata_path = Path(__file__).parent / 'question_uis/metadata.xhtml'
+    metadata_path = Path(__file__).parent / "question_uis/metadata.xhtml"
     with metadata_path.open() as xml:
         ui_renderer = QuestionUIRenderer(xml.read(), {})
         question_metadata = ui_renderer.get_metadata()
 
         expected_metadata = QuestionMetadata()
-        expected_metadata.correct_response = {"my_number": "42", "my_select": "1", "my_radio": "2",
-                                              "my_text": "Lorem ipsum dolor sit amet."}
-        expected_metadata.expected_data = {"my_number": "Any", "my_select": "Any", "my_radio": "Any", "my_text": "Any",
-                                           "my_button": "Any", "only_lowercase_letters": "Any",
-                                           "between_5_and_10_chars": "Any"}
+        expected_metadata.correct_response = {
+            "my_number": "42",
+            "my_select": "1",
+            "my_radio": "2",
+            "my_text": "Lorem ipsum dolor sit amet.",
+        }
+        expected_metadata.expected_data = {
+            "my_number": "Any",
+            "my_select": "Any",
+            "my_radio": "Any",
+            "my_text": "Any",
+            "my_button": "Any",
+            "only_lowercase_letters": "Any",
+            "between_5_and_10_chars": "Any",
+        }
         expected_metadata.required_fields = ["my_number"]
 
         assert question_metadata.correct_response == expected_metadata.correct_response
@@ -29,11 +39,15 @@ def test_should_extract_correct_metadata() -> None:
 
 
 def test_should_resolve_placeholders() -> None:
-    placeholder_path = Path(__file__).parent / 'question_uis/placeholder.xhtml'
+    placeholder_path = Path(__file__).parent / "question_uis/placeholder.xhtml"
     with placeholder_path.open() as xml:
-        renderer = QuestionUIRenderer(xml=xml.read(), placeholders={
-            "param": "Value of param <b>one</b>.<script>'Oh no, danger!'</script>",
-            "description": "My simple description."})
+        renderer = QuestionUIRenderer(
+            xml=xml.read(),
+            placeholders={
+                "param": "Value of param <b>one</b>.<script>'Oh no, danger!'</script>",
+                "description": "My simple description.",
+            },
+        )
         result = renderer.render_formulation()
 
     # TODO: remove <string> surrounding the resolved placeholder
@@ -57,7 +71,7 @@ def test_should_hide_inline_feedback() -> None:
     options.general_feedback = False
     options.feedback = False
 
-    feedback_path = Path(__file__).parent / 'question_uis/feedbacks.xhtml'
+    feedback_path = Path(__file__).parent / "question_uis/feedbacks.xhtml"
     with feedback_path.open() as xml:
         renderer = QuestionUIRenderer(xml=xml.read(), placeholders={})
         result = renderer.render_formulation(options=options)
@@ -73,7 +87,7 @@ def test_should_hide_inline_feedback() -> None:
 def test_should_show_inline_feedback() -> None:
     options = QuestionDisplayOptions()
 
-    feedback_path = Path(__file__).parent / 'question_uis/feedbacks.xhtml'
+    feedback_path = Path(__file__).parent / "question_uis/feedbacks.xhtml"
     with feedback_path.open() as xml:
         renderer = QuestionUIRenderer(xml=xml.read(), placeholders={})
         result = renderer.render_formulation(options=options)
@@ -88,9 +102,18 @@ def test_should_show_inline_feedback() -> None:
     assert compare_xhtml(result, expected)
 
 
-@pytest.mark.parametrize("user_context, expected", [('guest', """
+@pytest.mark.parametrize(
+    "user_context, expected",
+    [
+        (
+            "guest",
+            """
      <div xmlns="http://www.w3.org/1999/xhtml"></div>
-     """), ('admin', """
+     """,
+        ),
+        (
+            "admin",
+            """
      <div xmlns="http://www.w3.org/1999/xhtml">
          <div>You're a teacher!</div>
          <div>You're a developer!</div>
@@ -98,12 +121,15 @@ def test_should_show_inline_feedback() -> None:
          <div>You're a proctor!</div>
          <div>You're any of the above!</div>
      </div>
-     """), ])
+     """,
+        ),
+    ],
+)
 def test_element_visibility_based_on_role(user_context: str, expected: str) -> None:
     options = QuestionDisplayOptions()
-    options.context['role'] = user_context
+    options.context["role"] = user_context
 
-    feedback_path = Path(__file__).parent / 'question_uis/if-role.xhtml'
+    feedback_path = Path(__file__).parent / "question_uis/if-role.xhtml"
     with feedback_path.open() as xml:
         renderer = QuestionUIRenderer(xml=xml.read(), placeholders={})
         result = renderer.render_formulation(options=options)
@@ -114,7 +140,7 @@ def test_element_visibility_based_on_role(user_context: str, expected: str) -> N
 def test_should_soften_validations() -> None:
     options = QuestionDisplayOptions()
 
-    validation_path = Path(__file__).parent / 'question_uis/validations.xhtml'
+    validation_path = Path(__file__).parent / "question_uis/validations.xhtml"
     with validation_path.open() as xml:
         renderer = QuestionUIRenderer(xml=xml.read(), placeholders={})
         result = renderer.render_formulation(options=options)
@@ -139,12 +165,12 @@ def test_should_soften_validations() -> None:
 def test_should_defuse_buttons() -> None:
     options = QuestionDisplayOptions()
 
-    feedback_path = Path(__file__).parent / 'question_uis/buttons.xhtml'
+    feedback_path = Path(__file__).parent / "question_uis/buttons.xhtml"
     with feedback_path.open() as xml:
         renderer = QuestionUIRenderer(xml=xml.read(), placeholders={})
         result = renderer.render_formulation(options=options)
 
-    expected = '''
+    expected = """
     <div xmlns="http://www.w3.org/1999/xhtml">
         <button class="btn btn-primary qpy-input" type="button">Submit</button>
         <button class="btn btn-primary qpy-input" type="button">Reset</button>
@@ -154,7 +180,7 @@ def test_should_defuse_buttons() -> None:
         <input class="btn btn-primary qpy-input" type="button" value="Reset"/>
         <input class="btn btn-primary qpy-input" type="button" value="Button"/>
     </div>
-    '''
+    """
     assert compare_xhtml(result, expected)
 
 
@@ -163,12 +189,12 @@ def test_should_defuse_buttons() -> None:
 def test_should_format_floats_in_en() -> None:
     options = QuestionDisplayOptions()
 
-    feedback_path = Path(__file__).parent / 'question_uis/format-floats.xhtml'
+    feedback_path = Path(__file__).parent / "question_uis/format-floats.xhtml"
     with feedback_path.open() as xml:
         renderer = QuestionUIRenderer(xml=xml.read(), placeholders={})
         result = renderer.render_formulation(options=options)
 
-    expected = '''
+    expected = """
     <div xmlns="http://www.w3.org/1999/xhtml">
         Just the decsep: <span>1.23456</span>
         Thousands sep without decimals: <span>1,000,000,000</span>
@@ -178,12 +204,12 @@ def test_should_format_floats_in_en() -> None:
         Pad with zeros: <span>1.10000</span>
         Strip zeros: <span>1.1</span>
     </div>
-    '''
+    """
     assert compare_xhtml(result, expected)
 
 
 def test_should_shuffle_the_same_way_in_same_attempt() -> None:
-    feedback_path = Path(__file__).parent / 'question_uis/shuffle.xhtml'
+    feedback_path = Path(__file__).parent / "question_uis/shuffle.xhtml"
     with feedback_path.open() as xml:
         input_xml = xml.read()
 
@@ -196,7 +222,7 @@ def test_should_shuffle_the_same_way_in_same_attempt() -> None:
 
 
 def test_should_replace_shuffled_index() -> None:
-    feedback_path = Path(__file__).parent / 'question_uis/shuffled-index.xhtml'
+    feedback_path = Path(__file__).parent / "question_uis/shuffled-index.xhtml"
     with feedback_path.open() as xml:
         input_xml = xml.read()
 
@@ -224,7 +250,7 @@ def test_should_replace_shuffled_index() -> None:
 
 
 def test_clean_up() -> None:
-    xml_content = '''
+    xml_content = """
     <qpy:question xmlns:qpy="http://questionpy.org/ns/question">
         <qpy:formulation>
             <qpy:element>Text</qpy:element>
@@ -233,7 +259,7 @@ def test_clean_up() -> None:
             <regular xmlns:qpy="http://questionpy.org/ns/question">Normal Content</regular>
         </qpy:formulation>
     </qpy:question>
-    '''
+    """
     renderer = QuestionUIRenderer(xml=xml_content, placeholders={})
     result = renderer.render_formulation()
 

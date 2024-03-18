@@ -9,8 +9,12 @@ import click
 import yaml
 from pydantic import ValidationError
 from questionpy_common.manifest import Manifest
-from questionpy_server.worker.runtime.package_location import PackageLocation, DirPackageLocation, ZipPackageLocation, \
-    FunctionPackageLocation
+from questionpy_server.worker.runtime.package_location import (
+    PackageLocation,
+    DirPackageLocation,
+    ZipPackageLocation,
+    FunctionPackageLocation,
+)
 from questionpy_sdk.constants import PACKAGE_CONFIG_FILENAME
 from questionpy_sdk.models import PackageConfig
 

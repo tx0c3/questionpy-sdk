@@ -50,7 +50,7 @@ def start_runner(web_app: web.Application, unused_port: int) -> None:
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(runner.setup())
-    site = web.TCPSite(runner, 'localhost', unused_port)
+    site = web.TCPSite(runner, "localhost", unused_port)
     loop.run_until_complete(site.start())
     loop.run_forever()
 
@@ -67,9 +67,9 @@ def start_runner_thread(sdk_web_server: WebServer, port: int) -> Iterator:
 def normalize_element(element: etree._Element) -> etree._Element:
     """Recursively normalize an XML element by sorting attributes and normalizing whitespace."""
     if element.text:
-        element.text = ' '.join(element.text.split())
+        element.text = " ".join(element.text.split())
     if element.tail:
-        element.tail = ' '.join(element.tail.split())
+        element.tail = " ".join(element.tail.split())
 
     if element.attrib:
         attributes = sorted(element.attrib.items())

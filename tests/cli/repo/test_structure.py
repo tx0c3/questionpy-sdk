@@ -66,10 +66,13 @@ def test_structure_with_empty_folder() -> None:
         out_path = Path(directory, "out")
         assert out_path.exists()
 
-        assert_same_structure(out_path, [
-            out_path / "META.json",
-            out_path / "PACKAGES.json.gz",
-        ])
+        assert_same_structure(
+            out_path,
+            [
+                out_path / "META.json",
+                out_path / "PACKAGES.json.gz",
+            ],
+        )
 
 
 @pytest.mark.parametrize("count", [1, 3])
@@ -86,20 +89,34 @@ def test_structure_creates_only_one_package_if_identical(count: int) -> None:
         result = runner.invoke(structure, ["root", "out"])
 
         assert result.exit_code == 0
-        assert_same_structure(Path(directory, "out"), [
-            out / "META.json",
-            out / "PACKAGES.json.gz",
-            out / config.namespace / config.short_name / create_normalized_filename(config)
-        ])
+        assert_same_structure(
+            Path(directory, "out"),
+            [
+                out / "META.json",
+                out / "PACKAGES.json.gz",
+                out / config.namespace / config.short_name / create_normalized_filename(config),
+            ],
+        )
 
 
-@pytest.mark.parametrize("package_1, package_2", [
-    [("namespace_1", "shortname", "1.0.0"), ("namespace_2", "shortname", "1.0.0")],  # diff. namespaces, same names
-    [("namespace", "shortname_1", "1.0.0"), ("namespace", "shortname_2", "1.0.0")],  # same namespaces, diff. names
-    [("namespace_1", "shortname_1", "1.0.0"), ("namespace_2", "shortname_2", "1.0.0")],  # diff. namespaces and names
-    [("namespace", "shortname", "1.0.0"), ("namespace", "shortname", "2.0.0")],  # same package, diff. versions
-], ids=["different_namespaces-same_short_names", "same_namespaces-different_short_names",
-        "different_namespaces-different_short_names", "same_package-different_versions"])
+@pytest.mark.parametrize(
+    "package_1, package_2",
+    [
+        [("namespace_1", "shortname", "1.0.0"), ("namespace_2", "shortname", "1.0.0")],  # diff. namespaces, same names
+        [("namespace", "shortname_1", "1.0.0"), ("namespace", "shortname_2", "1.0.0")],  # same namespaces, diff. names
+        [
+            ("namespace_1", "shortname_1", "1.0.0"),
+            ("namespace_2", "shortname_2", "1.0.0"),
+        ],  # diff. namespaces and names
+        [("namespace", "shortname", "1.0.0"), ("namespace", "shortname", "2.0.0")],  # same package, diff. versions
+    ],
+    ids=[
+        "different_namespaces-same_short_names",
+        "same_namespaces-different_short_names",
+        "different_namespaces-different_short_names",
+        "same_package-different_versions",
+    ],
+)
 def test_structure_with_multiple_packages(package_1: tuple[str, str, str], package_2: tuple[str, str, str]) -> None:
     namespace_1, short_name_1, version_1 = package_1
     namespace_2, short_name_2, version_2 = package_2
@@ -116,9 +133,12 @@ def test_structure_with_multiple_packages(package_1: tuple[str, str, str], packa
         result = runner.invoke(structure, ["root", "out"])
 
         assert result.exit_code == 0
-        assert_same_structure(Path(directory, "out"), [
-            out / "META.json",
-            out / "PACKAGES.json.gz",
-            out / config_1.namespace / config_1.short_name / create_normalized_filename(config_1),
-            out / config_2.namespace / config_2.short_name / create_normalized_filename(config_2),
-        ])
+        assert_same_structure(
+            Path(directory, "out"),
+            [
+                out / "META.json",
+                out / "PACKAGES.json.gz",
+                out / config_1.namespace / config_1.short_name / create_normalized_filename(config_1),
+                out / config_2.namespace / config_2.short_name / create_normalized_filename(config_2),
+            ],
+        )

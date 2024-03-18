@@ -8,35 +8,77 @@ from typing import Union
 import pytest
 from _pytest.fixtures import SubRequest
 
-from questionpy_common.elements import CheckboxElement, FormSection, StaticTextElement, RepetitionElement, \
-    TextInputElement, CheckboxGroupElement, Option, RadioGroupElement, SelectElement, GroupElement, \
-    OptionsFormDefinition, FormElement
+from questionpy_common.elements import (
+    CheckboxElement,
+    FormSection,
+    StaticTextElement,
+    RepetitionElement,
+    TextInputElement,
+    CheckboxGroupElement,
+    Option,
+    RadioGroupElement,
+    SelectElement,
+    GroupElement,
+    OptionsFormDefinition,
+    FormElement,
+)
 
 from questionpy_sdk.webserver.context import contextualize, CxdFormElement
-from questionpy_sdk.webserver.elements import CxdRepetitionElement, CxdGroupElement, CxdOption, CxdRadioGroupElement, \
-    CxdSelectElement, CxdCheckboxGroupElement
+from questionpy_sdk.webserver.elements import (
+    CxdRepetitionElement,
+    CxdGroupElement,
+    CxdOption,
+    CxdRadioGroupElement,
+    CxdSelectElement,
+    CxdCheckboxGroupElement,
+)
 
 
-@pytest.fixture(params=[(
-    TextInputElement(name="text", label="Text", default="Df { qpy:repno }", placeholder="Ph { qpy:repno }"),
-    StaticTextElement(name="static", label="Static", text="Sample text { qpy:repno }"),
-    CheckboxElement(name="chk", left_label="ll { qpy:repno }", right_label="rr { qpy:repno }"),
-    CheckboxGroupElement(name="chk_group", checkboxes=[
-        CheckboxElement(name="chk1", left_label="l1 { qpy:repno }", right_label="r1 { qpy:repno }", ),
-        CheckboxElement(name="chk2", left_label="l2 { qpy:repno }", right_label="r2 { qpy:repno }", )
-    ]),
-    RadioGroupElement(name="radio", label="Text", options=[
-        Option(label="opt1 { qpy:repno }", value="opt1"),
-        Option(label="opt2 { qpy:repno }", value="opt2")
-    ]),
-    SelectElement(name="select", label="Text { qpy:repno }", options=[
-        Option(label="opt1 { qpy:repno }", value="opt1"),
-        Option(label="opt2 { qpy:repno }", value="opt2")
-    ]),
-    GroupElement(name="group", label="Text", elements=[
-        CheckboxElement(name="chk", left_label="ll { qpy:repno }", right_label="rr { qpy:repno }")
-    ])
-)])
+@pytest.fixture(
+    params=[
+        (
+            TextInputElement(name="text", label="Text", default="Df { qpy:repno }", placeholder="Ph { qpy:repno }"),
+            StaticTextElement(name="static", label="Static", text="Sample text { qpy:repno }"),
+            CheckboxElement(name="chk", left_label="ll { qpy:repno }", right_label="rr { qpy:repno }"),
+            CheckboxGroupElement(
+                name="chk_group",
+                checkboxes=[
+                    CheckboxElement(
+                        name="chk1",
+                        left_label="l1 { qpy:repno }",
+                        right_label="r1 { qpy:repno }",
+                    ),
+                    CheckboxElement(
+                        name="chk2",
+                        left_label="l2 { qpy:repno }",
+                        right_label="r2 { qpy:repno }",
+                    ),
+                ],
+            ),
+            RadioGroupElement(
+                name="radio",
+                label="Text",
+                options=[
+                    Option(label="opt1 { qpy:repno }", value="opt1"),
+                    Option(label="opt2 { qpy:repno }", value="opt2"),
+                ],
+            ),
+            SelectElement(
+                name="select",
+                label="Text { qpy:repno }",
+                options=[
+                    Option(label="opt1 { qpy:repno }", value="opt1"),
+                    Option(label="opt2 { qpy:repno }", value="opt2"),
+                ],
+            ),
+            GroupElement(
+                name="group",
+                label="Text",
+                elements=[CheckboxElement(name="chk", left_label="ll { qpy:repno }", right_label="rr { qpy:repno }")],
+            ),
+        )
+    ]
+)
 def form_elements_fixture(request: SubRequest) -> tuple[FormElement]:
     return request.param
 
@@ -50,7 +92,8 @@ def repetition_element_fixture(form_elements_fixture: tuple[FormElement]) -> Rep
 def form_definition_fixture(repetition_element_fixture: RepetitionElement) -> OptionsFormDefinition:
     return OptionsFormDefinition(
         general=[repetition_element_fixture],
-        sections=[FormSection(name="section", header="Section", elements=[repetition_element_fixture])])
+        sections=[FormSection(name="section", header="Section", elements=[repetition_element_fixture])],
+    )
 
 
 def _substring_in_cxd_element(element: Union[CxdFormElement, CxdOption], substring: str) -> bool:
@@ -72,10 +115,20 @@ def _substring_in_cxd_element(element: Union[CxdFormElement, CxdOption], substri
 
 def test_contextualize_should_not_replace_identifier_in_group(form_elements_fixture: tuple[FormElement]) -> None:
     form_definition = OptionsFormDefinition(
-        general=[RepetitionElement(name="repetition", initial_repetitions=1, increment=1, elements=[
-            GroupElement(name="group { qpy:repno }", label="Text { qpy:repno }", elements=[form_elements_fixture[0]])
-        ])],
-        sections=[])
+        general=[
+            RepetitionElement(
+                name="repetition",
+                initial_repetitions=1,
+                increment=1,
+                elements=[
+                    GroupElement(
+                        name="group { qpy:repno }", label="Text { qpy:repno }", elements=[form_elements_fixture[0]]
+                    )
+                ],
+            )
+        ],
+        sections=[],
+    )
     cxd_form = contextualize(form_definition, form_data=None)
 
     cxd_repetition = cxd_form.general[0]
@@ -107,9 +160,7 @@ def test_contextualize_should_replace_identifiers(form_definition_fixture: Optio
 
 
 def test_contextualize_should_not_replace_outside_repetition(form_elements_fixture: tuple[FormElement]) -> None:
-    form_definition = OptionsFormDefinition(
-        general=form_elements_fixture,
-        sections=[])
+    form_definition = OptionsFormDefinition(general=form_elements_fixture, sections=[])
     cxd_form = contextualize(form_definition, form_data=None)
 
     # the "qpy:repno" identifier should still be in the model fields

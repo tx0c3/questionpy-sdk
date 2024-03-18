@@ -54,8 +54,7 @@ class OptionEnum(Enum):
             return enum_member.value
 
         return core_schema.no_info_plain_validator_function(
-            validate,
-            serialization=core_schema.plain_serializer_function_ser_schema(serialize)
+            validate, serialization=core_schema.plain_serializer_function_ser_schema(serialize)
         )
 
 
@@ -106,8 +105,9 @@ def _is_valid_annotation(annotation: object, expected: object) -> bool:
     if expected_origin and expected_origin is annotation_origin:
         # For an arbitrary generic G and an expected type G[x],
         # an annotation G[y] is valid if _is_valid_annotation(x, y) (recursively)
-        return len(expected_args) == len(annotation_args) \
-            and all(_is_valid_annotation(arg_a, arg_e) for arg_a, arg_e in zip(annotation_args, expected_args))
+        return len(expected_args) == len(annotation_args) and all(
+            _is_valid_annotation(arg_a, arg_e) for arg_a, arg_e in zip(annotation_args, expected_args)
+        )
 
     return False
 
@@ -153,8 +153,10 @@ class _FormModelMeta(ModelMetaclass):
             if key in annotations:
                 # explicit type defined, check its validity
                 if not _is_valid_annotation(annotations[key], expected_type):
-                    raise TypeError(f"The element '{key}' produces values of type '{expected_type}', but is annotated "
-                                    f"with '{annotations[key]}'")
+                    raise TypeError(
+                        f"The element '{key}' produces values of type '{expected_type}', but is annotated "
+                        f"with '{annotations[key]}'"
+                    )
             else:
                 # no explicit type defined, set the default
                 # this won't help type checkers or code completion, but will allow pydantic to validate inputs
@@ -171,6 +173,7 @@ class FormModel(BaseModel, metaclass=_FormModelMeta):
     Use the DSL functions to define your elements as fields, and have submitted form data automatically validated into a
     type-safe instance of your model.
     """
+
     __slots__ = ()
 
     qpy_form: ClassVar[OptionsFormDefinition]

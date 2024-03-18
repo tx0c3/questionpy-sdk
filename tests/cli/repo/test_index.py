@@ -32,10 +32,7 @@ def test_index_empty_directory() -> None:
 
         result = runner.invoke(index, ["."])
         assert result.exit_code == 0
-        assert_same_structure(cwd, [
-            cwd / 'META.json',
-            cwd / 'PACKAGES.json.gz'
-        ])
+        assert_same_structure(cwd, [cwd / "META.json", cwd / "PACKAGES.json.gz"])
 
 
 def test_index_with_existing_meta_and_index() -> None:
@@ -47,10 +44,7 @@ def test_index_with_existing_meta_and_index() -> None:
 
         result = runner.invoke(index, ["."])
         assert result.exit_code == 0
-        assert_same_structure(cwd, [
-            cwd / 'META.json',
-            cwd / 'PACKAGES.json.gz'
-        ])
+        assert_same_structure(cwd, [cwd / "META.json", cwd / "PACKAGES.json.gz"])
 
 
 def test_index_allows_packages_root() -> None:
@@ -62,11 +56,7 @@ def test_index_allows_packages_root() -> None:
 
         result = runner.invoke(index, ["."])
         assert result.exit_code == 0
-        assert_same_structure(cwd, [
-            cwd / 'META.json',
-            cwd / 'PACKAGES.json.gz',
-            path
-        ])
+        assert_same_structure(cwd, [cwd / "META.json", cwd / "PACKAGES.json.gz", path])
 
 
 @pytest.mark.parametrize("depth", [1, 2, 3, 9])
@@ -85,8 +75,4 @@ def test_index_allows_packages_in_subdirectories(depth: int) -> None:
 
         result = runner.invoke(index, ["."])
         assert result.exit_code == 0
-        assert_same_structure(cwd, [
-            cwd / 'META.json',
-            cwd / 'PACKAGES.json.gz',
-            path
-        ])
+        assert_same_structure(cwd, [cwd / "META.json", cwd / "PACKAGES.json.gz", path])

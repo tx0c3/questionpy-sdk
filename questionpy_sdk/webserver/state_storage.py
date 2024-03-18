@@ -27,13 +27,13 @@ def _unflatten(flat_form_data: dict[str, str]) -> dict[str, Any]:
         becomes::
 
             {
-                'my_hidden': 'foo',
-                'my_repetition': [{'name': {'first_name': 'John '}, 'role': 'OPT_1'}],
+                "my_hidden": "foo",
+                "my_repetition": [{"name": {"first_name": "John "}, "role": "OPT_1"}],
             }
     """
     unflattened_dict: dict[str, Any] = {}
     for flat_key, value in flat_form_data.items():
-        key_path = flat_key.replace(']', '').split('[')
+        key_path = flat_key.replace("]", "").split("[")
         current_dict = unflattened_dict
         for key_part in key_path[:-1]:
             current_dict = current_dict.setdefault(key_part, {})
@@ -83,9 +83,9 @@ def parse_form_data(form_data: dict) -> dict:
             }
     """
     unflattened_form_data = _unflatten(form_data)
-    options = unflattened_form_data.get('general', {})
+    options = unflattened_form_data.get("general", {})
     for section_name, section in unflattened_form_data.items():
-        if not section_name == 'general':
+        if not section_name == "general":
             options[section_name] = section
     return options
 
@@ -103,7 +103,7 @@ def add_repetition(form_data: dict[str, Any], reference: list, increment: int) -
     """
     current_element = form_data
 
-    if ref := reference.pop(0) != 'general':
+    if ref := reference.pop(0) != "general":
         current_element = current_element[ref]
     while reference:
         ref = reference.pop(0)
@@ -120,7 +120,6 @@ def add_repetition(form_data: dict[str, Any], reference: list, increment: int) -
 
 
 class QuestionStateStorage:
-
     def __init__(self, storage_path: Path) -> None:
         # Mapping of package path to question state path
         self.paths: dict[str, Path] = {}
@@ -130,7 +129,7 @@ class QuestionStateStorage:
         path = self._state_path_for_package(key)
         path.parent.mkdir(parents=True, exist_ok=True)
         self.paths[str(key)] = path
-        with path.open('w') as file:
+        with path.open("w") as file:
             json.dump(question_state, file, indent=2)
 
     def get(self, key: PackageLocation) -> Optional[dict]:

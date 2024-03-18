@@ -27,8 +27,9 @@ def assert_same_structure(directory: Path, expected: list[Path]) -> None:
     assert sorted(file for file in directory.rglob("*") if file.is_file()) == sorted(expected)
 
 
-def create_package(path: Path, short_name: str, namespace: str = "local", version: str = "0.1.0") -> \
-        tuple[Path, PackageConfig]:
+def create_package(
+    path: Path, short_name: str, namespace: str = "local", version: str = "0.1.0"
+) -> tuple[Path, PackageConfig]:
     """
     Create a '.qpy'-package.
 
@@ -44,8 +45,9 @@ def create_package(path: Path, short_name: str, namespace: str = "local", versio
         path to the package and the config
     """
     try:
-        config = PackageConfig(short_name=short_name, namespace=namespace, version=version, api_version="0.1",
-                               author="pytest")
+        config = PackageConfig(
+            short_name=short_name, namespace=namespace, version=version, api_version="0.1", author="pytest"
+        )
     except ValidationError as e:
         pytest.xfail(f"Invalid config while creating the package: {e}")
 

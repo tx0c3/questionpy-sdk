@@ -38,9 +38,14 @@ class Question(BaseQuestion, ABC, Generic[_QS, _A]):
         attempt_state = self.attempt_class.attempt_state_class(variant=variant)
         return self.attempt_class(self, attempt_state)
 
-    def get_attempt(self, attempt_state: str, scoring_state: Optional[str] = None,
-                    response: Optional[dict] = None, compute_score: bool = False,
-                    generate_hint: bool = False) -> BaseAttempt:
+    def get_attempt(
+        self,
+        attempt_state: str,
+        scoring_state: Optional[str] = None,
+        response: Optional[dict] = None,
+        compute_score: bool = False,
+        generate_hint: bool = False,
+    ) -> BaseAttempt:
         # TODO: Implement response.
         attempt_state_obj = self.attempt_class.attempt_state_class.model_validate_json(attempt_state)
         scoring_state_obj = None
@@ -71,8 +76,7 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
       >>> class MyOptions(FormModel): ...
       >>> class MyAttempt(Attempt): ...
       >>> class MyQuestion(Question[BaseQuestionState[MyOptions], MyAttempt]): ...
-      >>> class MyQuestionType(QuestionType[MyOptions, MyQuestion]):
-      ...   ...  # Your code goes here.
+      >>> class MyQuestionType(QuestionType[MyOptions, MyQuestion]): ...  # Your code goes here.
     """
 
     # We'd declare these using _F and _Q ideally, but that leads to "Access to generic instance variables via class is
@@ -97,9 +101,10 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
 
         cls.options_class = get_type_arg(cls, QuestionType, 0, bound=FormModel, default=FormModel)
         cls.question_class = get_type_arg(cls, QuestionType, 1, bound=Question)
-        if cls.options_class != cls.question_class.state_class.model_fields['options'].annotation:
+        if cls.options_class != cls.question_class.state_class.model_fields["options"].annotation:
             raise TypeError(
-                f"{cls.__name__} must have the same FormModel as {cls.question_class.state_class.__name__}.")
+                f"{cls.__name__} must have the same FormModel as {cls.question_class.state_class.__name__}."
+            )
 
     def get_options_form(self, question_state: Optional[str]) -> tuple[OptionsFormDefinition, dict[str, object]]:
         if question_state:

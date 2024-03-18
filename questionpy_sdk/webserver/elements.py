@@ -7,8 +7,20 @@ from typing import List, Union, Annotated, Any, Optional
 from typing_extensions import TypeAlias
 from pydantic import Field, BaseModel, computed_field
 
-from questionpy_common.elements import StaticTextElement, GroupElement, HiddenElement, RepetitionElement, \
-    SelectElement, RadioGroupElement, Option, CheckboxGroupElement, CheckboxElement, TextInputElement, FormSection
+from questionpy_common.elements import (
+    StaticTextElement,
+    GroupElement,
+    HiddenElement,
+    RepetitionElement,
+    SelectElement,
+    RadioGroupElement,
+    Option,
+    CheckboxGroupElement,
+    CheckboxElement,
+    TextInputElement,
+    FormSection,
+)
+
 # pylint: disable=unused-import
 from questionpy_common.elements import FormElement  # noqa: F401
 
@@ -18,7 +30,7 @@ class _CxdFormElement(BaseModel):
 
     @computed_field
     def id(self) -> str:
-        return '_'.join(self.path)
+        return "_".join(self.path)
 
     def contextualize(self, pattern: Pattern[str], replacement: str) -> None:
         """
@@ -62,7 +74,6 @@ class CxdTextInputElement(TextInputElement, _CxdFormElement):
 
 
 class CxdStaticTextElement(StaticTextElement, _CxdFormElement):
-
     def contextualize(self, pattern: Pattern[str], replacement: str) -> None:
         self.label = sub(pattern, replacement, self.label)
         self.text = sub(pattern, replacement, self.text)
@@ -86,7 +97,7 @@ class CxdCheckboxGroupElement(CheckboxGroupElement, _CxdFormElement):
     def __init__(self, **data: Any):
         super().__init__(**data)
         for checkbox in self.checkboxes:
-            path = data.get('path')
+            path = data.get("path")
             if not isinstance(path, list):
                 raise TypeError(f"Path should be of type list but is {type(path)}")
             path.append(checkbox.name)
@@ -117,7 +128,7 @@ class CxdRadioGroupElement(RadioGroupElement, _CxdFormElement):
     def __init__(self, **data: Any):
         super().__init__(**data)
         for option in self.options:
-            path = data.get('path')
+            path = data.get("path")
             if not isinstance(path, list):
                 raise TypeError(f"Path should be of type list but is {type(path)}")
             path.append(option.value)
@@ -144,7 +155,7 @@ class CxdSelectElement(SelectElement, _CxdFormElement):
     def __init__(self, **data: Any):
         super().__init__(**data)
         for option in self.options:
-            path = data.get('path')
+            path = data.get("path")
             if not isinstance(path, list):
                 raise TypeError(f"Path should be of type list but is {type(path)}")
             path.append(option.value)
@@ -185,10 +196,20 @@ class CxdRepetitionElement(RepetitionElement, _CxdFormElement):
         super().__init__(**data, elements=[])
 
 
-CxdFormElement: TypeAlias = Annotated[Union[
-    CxdStaticTextElement, CxdTextInputElement, CxdCheckboxElement, CxdCheckboxGroupElement,
-    CxdRadioGroupElement, CxdSelectElement, CxdHiddenElement, CxdGroupElement, CxdRepetitionElement
-], Field(discriminator="kind")]
+CxdFormElement: TypeAlias = Annotated[
+    Union[
+        CxdStaticTextElement,
+        CxdTextInputElement,
+        CxdCheckboxElement,
+        CxdCheckboxGroupElement,
+        CxdRadioGroupElement,
+        CxdSelectElement,
+        CxdHiddenElement,
+        CxdGroupElement,
+        CxdRepetitionElement,
+    ],
+    Field(discriminator="kind"),
+]
 
 
 class CxdFormSection(FormSection):

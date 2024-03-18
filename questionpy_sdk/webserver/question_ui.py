@@ -3,7 +3,7 @@
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
 import random
-from typing import Any, Optional
+from typing import Any
 
 from lxml import etree
 from lxml.html.clean import Cleaner
@@ -102,7 +102,7 @@ class QuestionUIRenderer:
     question: etree._Element
     placeholders: dict[str, str]
 
-    def __init__(self, xml: str, placeholders: dict[str, str], seed: Optional[int] = None) -> None:
+    def __init__(self, xml: str, placeholders: dict[str, str], seed: int | None = None) -> None:
         self.seed = seed
         self.xml = xml
         self.placeholders = placeholders
@@ -143,8 +143,8 @@ class QuestionUIRenderer:
         return question_metadata
 
     def render_general_feedback(
-        self, attempt: Optional[dict] = None, options: Optional[QuestionDisplayOptions] = None
-    ) -> Optional[str]:
+        self, attempt: dict | None = None, options: QuestionDisplayOptions | None = None
+    ) -> str | None:
         """Renders the contents of the `qpy:general-feedback` element or returns `None` if there is none."""
         try:
             elements = assert_element_list(
@@ -159,8 +159,8 @@ class QuestionUIRenderer:
         return self.render_part(elements[0], attempt, options)
 
     def render_specific_feedback(
-        self, attempt: Optional[dict] = None, options: Optional[QuestionDisplayOptions] = None
-    ) -> Optional[str]:
+        self, attempt: dict | None = None, options: QuestionDisplayOptions | None = None
+    ) -> str | None:
         """Renders the contents of the `qpy:specific-feedback` element or returns `None` if there is none."""
         try:
             elements = assert_element_list(
@@ -175,8 +175,8 @@ class QuestionUIRenderer:
         return self.render_part(elements[0], attempt, options)
 
     def render_right_answer(
-        self, attempt: Optional[dict] = None, options: Optional[QuestionDisplayOptions] = None
-    ) -> Optional[str]:
+        self, attempt: dict | None = None, options: QuestionDisplayOptions | None = None
+    ) -> str | None:
         """Renders the contents of the `qpy:right-answer` element or returns `None` if there is none."""
         try:
             elements = assert_element_list(
@@ -190,9 +190,7 @@ class QuestionUIRenderer:
 
         return self.render_part(elements[0], attempt, options)
 
-    def render_formulation(
-        self, attempt: Optional[dict] = None, options: Optional[QuestionDisplayOptions] = None
-    ) -> str:
+    def render_formulation(self, attempt: dict | None = None, options: QuestionDisplayOptions | None = None) -> str:
         """Renders the contents of the `qpy:formulation` element. Raises an exception if there is none.
 
         Raises:
@@ -206,7 +204,7 @@ class QuestionUIRenderer:
         return self.render_part(formulations[0], attempt, options)
 
     def render_part(
-        self, part: etree._Element, attempt: Optional[dict] = None, options: Optional[QuestionDisplayOptions] = None
+        self, part: etree._Element, attempt: dict | None = None, options: QuestionDisplayOptions | None = None
     ) -> str:
         """Applies transformations to the descendants of a given node and returns the resulting HTML."""
         newdoc = etree.ElementTree(etree.Element("div", nsmap={None: self.XHTML_NAMESPACE}))  # type: ignore
@@ -282,7 +280,7 @@ class QuestionUIRenderer:
             parent.remove(p_instruction)
 
     def hide_unwanted_feedback(
-        self, xpath: etree.XPathDocumentEvaluator, options: Optional[QuestionDisplayOptions] = None
+        self, xpath: etree.XPathDocumentEvaluator, options: QuestionDisplayOptions | None = None
     ) -> None:
         """Hides elements marked with `qpy:feedback` if the type of feedback is disabled in ``options``"""
         if not options:
@@ -299,11 +297,10 @@ class QuestionUIRenderer:
                 if parent is not None:
                     parent.remove(element)
 
-    def hide_if_role(
-        self, xpath: etree.XPathDocumentEvaluator, options: Optional[QuestionDisplayOptions] = None
-    ) -> None:
+    def hide_if_role(self, xpath: etree.XPathDocumentEvaluator, options: QuestionDisplayOptions | None = None) -> None:
         """Removes elements with `qpy:if-role` attributes if the user matches none of the given roles in this
-        context."""
+        context.
+        """
         if not options or options.context.get("role") == "admin":
             return
 
@@ -321,8 +318,8 @@ class QuestionUIRenderer:
     def set_input_values_and_readonly(
         self,
         xpath: etree.XPathDocumentEvaluator,
-        attempt: Optional[dict],
-        options: Optional[QuestionDisplayOptions] = None,
+        attempt: dict | None,
+        options: QuestionDisplayOptions | None = None,
     ) -> None:
         """Transforms input(-like) elements.
 

@@ -1,22 +1,23 @@
 #  This file is part of the QuestionPy Server. (https://questionpy.org)
 #  The QuestionPy Server is free software released under terms of the MIT license. See LICENSE.md.
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
-from typing import TypeVar, Any, Optional, Callable, cast
+from collections.abc import Callable
+from typing import Any, TypeVar, cast
 
 import pytest
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
+from questionpy import Attempt, BaseAttemptState, BaseQuestionState, BaseScoringState, Question, QuestionType
+from questionpy.form import FormModel, checkbox, repeat
 from questionpy_common.api.attempt import AttemptModel, AttemptUi, ScoreModel, ScoringCode
 from questionpy_common.api.qtype import BaseQuestionType
 from questionpy_common.api.question import QuestionModel, ScoringMethod
 from questionpy_common.environment import PackageInitFunction
 from questionpy_common.manifest import Manifest
 from questionpy_server.worker.runtime.package_location import FunctionPackageLocation
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
-
-from questionpy import QuestionType, Question, BaseQuestionState, Attempt, BaseAttemptState, BaseScoringState
-from questionpy.form import FormModel, repeat, checkbox
 
 _F = TypeVar("_F", bound=FormModel)
 
@@ -63,7 +64,7 @@ def package_3_init() -> BaseQuestionType:
 _C = TypeVar("_C", bound=Callable)
 
 
-def use_package(init_fun: PackageInitFunction, manifest: Optional[Manifest] = None) -> Callable[[_C], _C]:
+def use_package(init_fun: PackageInitFunction, manifest: Manifest | None = None) -> Callable[[_C], _C]:
     def decorator(wrapped: _C) -> _C:
         cast(Any, wrapped).qpy_package_location = FunctionPackageLocation.from_function(init_fun, manifest)
         return wrapped
@@ -100,14 +101,14 @@ class TestTemplates:
         repetition_element = driver.find_element(By.NAME, "general[repetition]")
 
         # Initially, there should be 2 reps.
-        assert 2 == len(repetition_element.find_elements(By.CLASS_NAME, "repetition-content"))
+        assert len(repetition_element.find_elements(By.CLASS_NAME, "repetition-content")) == 2
 
         repetition_element.find_element(By.CLASS_NAME, "repetition-button").click()
         WebDriverWait(driver, 2).until(expected_conditions.staleness_of(repetition_element))
         repetition_element = driver.find_element(By.NAME, "general[repetition]")
 
         # After clicking increment once, there should be 5.
-        assert 5 == len(repetition_element.find_elements(By.CLASS_NAME, "repetition-content"))
+        assert len(repetition_element.find_elements(By.CLASS_NAME, "repetition-content")) == 5
 
     @use_package(
         package_1_init,

@@ -7,26 +7,26 @@ sections or form elements. A reference is a path from the referrer to the refere
 #  The QuestionPy SDK is free software released under terms of the MIT license. See LICENSE.md.
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
+from collections.abc import Sequence
 from itertools import chain
-from typing import Union, Sequence, Optional
+from typing import TypeAlias
 
-from questionpy_common.conditions import IsChecked, IsNotChecked, Equals, DoesNotEqual, In
+from questionpy_common.conditions import DoesNotEqual, Equals, In, IsChecked, IsNotChecked
 from questionpy_common.elements import (
-    OptionsFormDefinition,
-    FormSection,
-    GroupElement,
-    RepetitionElement,
-    FormElement,
     CanHaveConditions,
     CheckboxElement,
-    TextInputElement,
-    RadioGroupElement,
-    SelectElement,
+    FormElement,
+    FormSection,
+    GroupElement,
     HiddenElement,
+    OptionsFormDefinition,
+    RadioGroupElement,
+    RepetitionElement,
+    SelectElement,
+    TextInputElement,
 )
-from typing_extensions import TypeAlias
 
-_FormNode: TypeAlias = Union[OptionsFormDefinition, FormSection, FormElement]
+_FormNode: TypeAlias = OptionsFormDefinition | FormSection | FormElement
 
 
 class FormError(Exception):
@@ -41,7 +41,7 @@ class FormError(Exception):
 class FormReferenceError(FormError):
     """A node in the form failed validation because it references a nonexistent element."""
 
-    def __init__(self, node: str, reference: str, container_name: Optional[str], local_name: str):
+    def __init__(self, node: str, reference: str, container_name: str | None, local_name: str):
         self.reference = reference
         """Full reference that could not be resolved."""
         self.container_name = container_name
@@ -57,7 +57,7 @@ class FormReferenceError(FormError):
         super().__init__(node, message)
 
 
-def _absolute_name(first_node: Union[_FormNode, str], *nodes: Union[_FormNode, str]) -> str:
+def _absolute_name(first_node: _FormNode | str, *nodes: _FormNode | str) -> str:
     """Concatenates the names of all the given nodes to a reference string."""
     name_parts = []
     for node in (first_node, *nodes):

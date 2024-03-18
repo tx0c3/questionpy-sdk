@@ -2,38 +2,37 @@
 #  QuestionPy is free software released under terms of the MIT license. See LICENSE.md.
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
-from typing import List, Any, Optional, Dict
+from typing import Any
 
 from questionpy_common.elements import (
-    StaticTextElement,
     CheckboxElement,
-    TextInputElement,
+    CheckboxGroupElement,
     FormElement,
     GroupElement,
-    RepetitionElement,
-    OptionsFormDefinition,
-    CheckboxGroupElement,
-    RadioGroupElement,
-    SelectElement,
     HiddenElement,
+    OptionsFormDefinition,
+    RadioGroupElement,
+    RepetitionElement,
+    SelectElement,
+    StaticTextElement,
+    TextInputElement,
 )
-
 from questionpy_sdk.webserver.elements import (
-    CxdOptionsFormDefinition,
-    CxdFormSection,
-    CxdFormElement,
-    CxdGroupElement,
-    CxdRepetitionElement,
-    CxdStaticTextElement,
-    CxdTextInputElement,
     CxdCheckboxElement,
     CxdCheckboxGroupElement,
-    CxdRadioGroupElement,
-    CxdSelectElement,
+    CxdFormElement,
+    CxdFormSection,
+    CxdGroupElement,
     CxdHiddenElement,
+    CxdOptionsFormDefinition,
+    CxdRadioGroupElement,
+    CxdRepetitionElement,
+    CxdSelectElement,
+    CxdStaticTextElement,
+    CxdTextInputElement,
 )
 
-element_mapping: Dict[type, type] = {
+element_mapping: dict[type, type] = {
     StaticTextElement: CxdStaticTextElement,
     TextInputElement: CxdTextInputElement,
     CheckboxElement: CxdCheckboxElement,
@@ -46,9 +45,9 @@ element_mapping: Dict[type, type] = {
 
 def _contextualize_element(
     element: FormElement,
-    form_data: Optional[dict[str, Any]],
-    path: List[str],
-    context: Optional[dict[str, object]] = None,
+    form_data: dict[str, Any] | None,
+    path: list[str],
+    context: dict[str, object] | None = None,
 ) -> CxdFormElement:
     path.append(element.name)
     element_form_data = None
@@ -93,21 +92,19 @@ def _contextualize_element(
 
 
 def _contextualize_element_list(
-    element_list: List[FormElement],
-    form_data: Optional[dict[str, Any]],
+    element_list: list[FormElement],
+    form_data: dict[str, Any] | None,
     path: list[str],
-    context: Optional[dict[str, object]] = None,
-) -> List[CxdFormElement]:
-    cxd_element_list: List[CxdFormElement] = []
+    context: dict[str, object] | None = None,
+) -> list[CxdFormElement]:
+    cxd_element_list: list[CxdFormElement] = []
     for element in element_list:
         cxd_element = _contextualize_element(element, form_data, path, context)
         cxd_element_list.append(cxd_element)
     return cxd_element_list
 
 
-def contextualize(
-    form_definition: OptionsFormDefinition, form_data: Optional[dict[str, Any]]
-) -> CxdOptionsFormDefinition:
+def contextualize(form_definition: OptionsFormDefinition, form_data: dict[str, Any] | None) -> CxdOptionsFormDefinition:
     path: list[str] = ["general"]
     cxd_options_form = CxdOptionsFormDefinition()
     cxd_options_form.general = _contextualize_element_list(form_definition.general, form_data, path)

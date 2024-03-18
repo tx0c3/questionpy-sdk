@@ -8,9 +8,8 @@
 import asyncio
 import tempfile
 import threading
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from pathlib import Path
-from typing import Callable
 
 import pytest
 from aiohttp import web
@@ -61,7 +60,7 @@ def start_runner_thread(sdk_web_server: WebServer, port: int) -> Iterator:
     app_thread.daemon = True  # Set the thread as a daemon to automatically stop when main thread exits
     app_thread.start()
 
-    yield
+    return
 
 
 def normalize_element(element: etree._Element) -> etree._Element:

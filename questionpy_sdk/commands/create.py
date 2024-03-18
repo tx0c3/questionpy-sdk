@@ -3,14 +3,13 @@
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
 from pathlib import Path
-from typing import Optional
 from zipfile import ZipFile
 
 import click
 import yaml
-from questionpy_common.manifest import ensure_is_valid_name, DEFAULT_NAMESPACE
-from questionpy_sdk.constants import PACKAGE_CONFIG_FILENAME
 
+from questionpy_common.manifest import DEFAULT_NAMESPACE, ensure_is_valid_name
+from questionpy_sdk.constants import PACKAGE_CONFIG_FILENAME
 from questionpy_sdk.resources import EXAMPLE_PACKAGE
 
 
@@ -28,7 +27,7 @@ def validate_name(context: click.Context, _parameter: click.Parameter, value: st
 @click.argument("short_name", callback=validate_name)
 @click.option("--namespace", "-n", "namespace", callback=validate_name, default=DEFAULT_NAMESPACE)
 @click.option("--out", "-o", "out_path", type=click.Path(path_type=Path))
-def create(short_name: str, namespace: str, out_path: Optional[Path]) -> None:
+def create(short_name: str, namespace: str, out_path: Path | None) -> None:
     if not out_path:
         out_path = Path(short_name)
     if out_path.exists():

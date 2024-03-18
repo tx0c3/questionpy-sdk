@@ -8,20 +8,20 @@ from pathlib import Path
 import click
 import yaml
 from pydantic import ValidationError
+
 from questionpy_common.manifest import Manifest
-from questionpy_server.worker.runtime.package_location import (
-    PackageLocation,
-    DirPackageLocation,
-    ZipPackageLocation,
-    FunctionPackageLocation,
-)
 from questionpy_sdk.constants import PACKAGE_CONFIG_FILENAME
 from questionpy_sdk.models import PackageConfig
+from questionpy_server.worker.runtime.package_location import (
+    DirPackageLocation,
+    FunctionPackageLocation,
+    PackageLocation,
+    ZipPackageLocation,
+)
 
 
 def create_normalized_filename(manifest: Manifest) -> str:
-    """
-    Creates a normalized file name for the given manifest.
+    """Creates a normalized file name for the given manifest.
 
     Args:
         manifest: manifest of the package

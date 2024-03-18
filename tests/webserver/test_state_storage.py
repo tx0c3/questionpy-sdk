@@ -4,7 +4,7 @@
 
 import pytest
 
-from questionpy_sdk.webserver.state_storage import parse_form_data, add_repetition
+from questionpy_sdk.webserver.state_storage import add_repetition, parse_form_data
 
 RAW_FORM_DATA = {
     "general[input]": "my input ",

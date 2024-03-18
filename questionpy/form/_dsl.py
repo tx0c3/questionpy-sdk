@@ -44,48 +44,46 @@ Todo:
 #  The QuestionPy SDK is free software released under terms of the MIT license. See LICENSE.md.
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
-from typing import cast, TypeVar, Any, overload, Literal, Optional, Set, Union, Type
+from typing import Any, Literal, Optional, TypeAlias, TypeVar, cast, overload
 
-from questionpy_common.conditions import Condition, IsChecked, IsNotChecked, Equals, DoesNotEqual, In
+from questionpy.form._model import FormModel, OptionEnum, _FieldInfo, _OptionInfo, _SectionInfo, _StaticElementInfo
+from questionpy_common.conditions import Condition, DoesNotEqual, Equals, In, IsChecked, IsNotChecked
 from questionpy_common.elements import (
-    TextInputElement,
-    StaticTextElement,
     CheckboxElement,
-    RadioGroupElement,
-    SelectElement,
-    HiddenElement,
     GroupElement,
+    HiddenElement,
     Option,
+    RadioGroupElement,
     RepetitionElement,
+    SelectElement,
+    StaticTextElement,
+    TextInputElement,
 )
-from typing_extensions import TypeAlias
-
-from questionpy.form._model import FormModel, _FieldInfo, _SectionInfo, OptionEnum, _OptionInfo, _StaticElementInfo
 
 __all__ = [
-    "text_input",
-    "static_text",
     "checkbox",
-    "radio_group",
-    "select",
-    "option",
-    "hidden",
-    "section",
-    "group",
-    "repeat",
-    "is_checked",
-    "is_not_checked",
-    "equals",
     "does_not_equal",
+    "equals",
+    "group",
+    "hidden",
+    "is_checked",
     "is_in",
+    "is_not_checked",
+    "option",
+    "radio_group",
+    "repeat",
+    "section",
+    "select",
+    "static_text",
+    "text_input",
 ]
 
 _S = TypeVar("_S", bound=str)
 _F = TypeVar("_F", bound=FormModel)
 _E = TypeVar("_E", bound=OptionEnum)
 
-_OneOrMoreConditions: TypeAlias = Union[Condition, list[Condition]]
-_ZeroOrMoreConditions: TypeAlias = Optional[_OneOrMoreConditions]
+_OneOrMoreConditions: TypeAlias = Condition | list[Condition]
+_ZeroOrMoreConditions: TypeAlias = _OneOrMoreConditions | None
 
 
 def _listify(value: _ZeroOrMoreConditions) -> list[Condition]:
@@ -101,12 +99,12 @@ def text_input(
     label: str,
     *,
     required: Literal[False] = False,
-    default: Optional[str] = None,
-    placeholder: Optional[str] = None,
-    help: Optional[str] = None,
+    default: str | None = None,
+    placeholder: str | None = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
-) -> Optional[str]:
+) -> str | None:
     pass
 
 
@@ -115,9 +113,9 @@ def text_input(
     label: str,
     *,
     required: Literal[True],
-    default: Optional[str] = None,
-    placeholder: Optional[str] = None,
-    help: Optional[str] = None,
+    default: str | None = None,
+    placeholder: str | None = None,
+    help: str | None = None,
     disable_if: None = None,
     hide_if: None = None,
 ) -> str:
@@ -129,12 +127,12 @@ def text_input(
     label: str,
     *,
     required: bool = False,
-    default: Optional[str] = None,
-    placeholder: Optional[str] = None,
-    help: Optional[str] = None,
+    default: str | None = None,
+    placeholder: str | None = None,
+    help: str | None = None,
     disable_if: _OneOrMoreConditions,
     hide_if: _ZeroOrMoreConditions = None,
-) -> Optional[str]:
+) -> str | None:
     pass
 
 
@@ -143,12 +141,12 @@ def text_input(
     label: str,
     *,
     required: bool = False,
-    default: Optional[str] = None,
-    placeholder: Optional[str] = None,
-    help: Optional[str] = None,
+    default: str | None = None,
+    placeholder: str | None = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _OneOrMoreConditions,
-) -> Optional[str]:
+) -> str | None:
     pass
 
 
@@ -156,9 +154,9 @@ def text_input(
     label: str,
     *,
     required: bool = False,
-    default: Optional[str] = None,
-    placeholder: Optional[str] = None,
-    help: Optional[str] = None,
+    default: str | None = None,
+    placeholder: str | None = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
 ) -> Any:
@@ -195,7 +193,7 @@ def static_text(
     label: str,
     text: str,
     *,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
 ) -> StaticTextElement:
@@ -222,12 +220,12 @@ def static_text(
 
 @overload
 def checkbox(
-    left_label: Optional[str] = None,
-    right_label: Optional[str] = None,
+    left_label: str | None = None,
+    right_label: str | None = None,
     *,
     required: Literal[True],
     selected: bool = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: None = None,
     hide_if: None = None,
 ) -> Literal[True]:
@@ -236,12 +234,12 @@ def checkbox(
 
 @overload
 def checkbox(
-    left_label: Optional[str] = None,
-    right_label: Optional[str] = None,
+    left_label: str | None = None,
+    right_label: str | None = None,
     *,
     required: Literal[False] = False,
     selected: bool = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
 ) -> bool:
@@ -250,12 +248,12 @@ def checkbox(
 
 @overload
 def checkbox(
-    left_label: Optional[str] = None,
-    right_label: Optional[str] = None,
+    left_label: str | None = None,
+    right_label: str | None = None,
     *,
     required: bool = False,
     selected: bool = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _OneOrMoreConditions,
     hide_if: _ZeroOrMoreConditions = None,
 ) -> bool:
@@ -264,12 +262,12 @@ def checkbox(
 
 @overload
 def checkbox(
-    left_label: Optional[str] = None,
-    right_label: Optional[str] = None,
+    left_label: str | None = None,
+    right_label: str | None = None,
     *,
     required: bool = False,
     selected: bool = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _OneOrMoreConditions,
 ) -> bool:
@@ -277,12 +275,12 @@ def checkbox(
 
 
 def checkbox(
-    left_label: Optional[str] = None,
-    right_label: Optional[str] = None,
+    left_label: str | None = None,
+    right_label: str | None = None,
     *,
     required: bool = False,
     selected: bool = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
 ) -> Any:
@@ -318,49 +316,49 @@ def checkbox(
 @overload
 def radio_group(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: Literal[False] = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
-) -> Optional[_E]:
+) -> _E | None:
     pass
 
 
 @overload
 def radio_group(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: Literal[True],
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _OneOrMoreConditions,
     hide_if: _ZeroOrMoreConditions = None,
-) -> Optional[_E]:
+) -> _E | None:
     pass
 
 
 @overload
 def radio_group(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: Literal[True],
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _OneOrMoreConditions,
-) -> Optional[_E]:
+) -> _E | None:
     pass
 
 
 @overload
 def radio_group(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: Literal[True],
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: None = None,
     hide_if: None = None,
 ) -> _E:
@@ -369,10 +367,10 @@ def radio_group(
 
 def radio_group(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: bool = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
 ) -> Any:
@@ -408,53 +406,53 @@ def radio_group(
 @overload
 def select(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: Literal[False] = False,
     multiple: Literal[False] = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
-) -> Optional[_E]:
+) -> _E | None:
     pass
 
 
 @overload
 def select(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: Literal[True],
     multiple: Literal[False] = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _OneOrMoreConditions,
     hide_if: _ZeroOrMoreConditions = None,
-) -> Optional[_E]:
+) -> _E | None:
     pass
 
 
 @overload
 def select(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: Literal[True],
     multiple: Literal[False] = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _OneOrMoreConditions,
-) -> Optional[_E]:
+) -> _E | None:
     pass
 
 
 @overload
 def select(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: Literal[True],
     multiple: Literal[False] = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: None = None,
     hide_if: None = None,
 ) -> _E:
@@ -464,24 +462,24 @@ def select(
 @overload
 def select(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: bool = False,
     multiple: Literal[True],
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
-) -> Set[_E]:
+) -> set[_E]:
     pass
 
 
 def select(
     label: str,
-    enum: Type[_E],
+    enum: type[_E],
     *,
     required: bool = False,
     multiple: bool = False,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
 ) -> Any:
@@ -500,10 +498,10 @@ def select(
     """
     options = [Option(label=variant.label, value=variant.value, selected=variant.selected) for variant in enum]
 
-    expected_type: Type
+    expected_type: type
     default: object
     if multiple:
-        expected_type = Set[enum]  # type: ignore[valid-type]
+        expected_type = set[enum]  # type: ignore[valid-type]
         if not required or disable_if or hide_if:
             default = set()
         else:
@@ -557,12 +555,12 @@ def hidden(value: _S, *, disable_if: None = None, hide_if: None = None) -> _S:
 
 
 @overload
-def hidden(value: _S, *, disable_if: _OneOrMoreConditions, hide_if: _ZeroOrMoreConditions = None) -> Optional[_S]:
+def hidden(value: _S, *, disable_if: _OneOrMoreConditions, hide_if: _ZeroOrMoreConditions = None) -> _S | None:
     pass
 
 
 @overload
-def hidden(value: _S, *, disable_if: _ZeroOrMoreConditions = None, hide_if: _OneOrMoreConditions) -> Optional[_S]:
+def hidden(value: _S, *, disable_if: _ZeroOrMoreConditions = None, hide_if: _OneOrMoreConditions) -> _S | None:
     pass
 
 
@@ -589,7 +587,7 @@ def hidden(value: _S, *, disable_if: _ZeroOrMoreConditions = None, hide_if: _Zer
     )
 
 
-def section(header: str, model: Type[_F]) -> _F:
+def section(header: str, model: type[_F]) -> _F:
     """Adds a form section that can be expanded and collapsed.
 
     Args:
@@ -620,9 +618,9 @@ def section(header: str, model: Type[_F]) -> _F:
 
 def group(
     label: str,
-    model: Type[_F],
+    model: type[_F],
     *,
-    help: Optional[str] = None,
+    help: str | None = None,
     disable_if: _ZeroOrMoreConditions = None,
     hide_if: _ZeroOrMoreConditions = None,
 ) -> _F:
@@ -672,7 +670,7 @@ def group(
 
 
 def repeat(
-    model: Type[_F], *, initial: int = 1, minimum: int = 1, increment: int = 1, button_label: Optional[str] = None
+    model: type[_F], *, initial: int = 1, minimum: int = 1, increment: int = 1, button_label: str | None = None
 ) -> list[_F]:
     """Repeats a sub-model, allowing the user to add new repetitions with the click of a button.
 
@@ -756,7 +754,7 @@ def is_not_checked(name: str) -> IsNotChecked:
     return IsNotChecked(name=name)
 
 
-def equals(name: str, value: Union[str, int, bool]) -> Equals:
+def equals(name: str, value: str | int | bool) -> Equals:
     """Condition on the value of another field being equal to some static value.
 
     Many elements can be hidden or disabled client-side by passing conditions to ``hide_if`` or ``disable_if``. See the
@@ -777,7 +775,7 @@ def equals(name: str, value: Union[str, int, bool]) -> Equals:
     return Equals(name=name, value=value)
 
 
-def does_not_equal(name: str, value: Union[str, int, bool]) -> DoesNotEqual:
+def does_not_equal(name: str, value: str | int | bool) -> DoesNotEqual:
     """Condition on the value of another field NOT being equal to some static value.
 
     Many elements can be hidden or disabled client-side by passing conditions to ``hide_if`` or ``disable_if``. See the
@@ -802,7 +800,7 @@ def does_not_equal(name: str, value: Union[str, int, bool]) -> DoesNotEqual:
     return DoesNotEqual(name=name, value=value)
 
 
-def is_in(name: str, values: list[Union[str, int, bool]]) -> In:
+def is_in(name: str, values: list[str | int | bool]) -> In:
     """Condition on the value of another field being one of a number of static values.
 
     Many elements can be hidden or disabled client-side by passing conditions to ``hide_if`` or ``disable_if``. See the

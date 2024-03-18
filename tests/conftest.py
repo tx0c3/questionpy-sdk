@@ -17,8 +17,7 @@ from questionpy_sdk.models import PackageConfig
 
 
 def assert_same_structure(directory: Path, expected: list[Path]) -> None:
-    """
-    Checks if the directory has the same folder structure as `expected`.
+    """Checks if the directory has the same folder structure as `expected`.
 
     Args:
         directory: directory to check
@@ -30,8 +29,7 @@ def assert_same_structure(directory: Path, expected: list[Path]) -> None:
 def create_package(
     path: Path, short_name: str, namespace: str = "local", version: str = "0.1.0"
 ) -> tuple[Path, PackageConfig]:
-    """
-    Create a '.qpy'-package.
+    """Create a '.qpy'-package.
 
     The test will skip if the packaging fails and xfail if the config is invalid.
 

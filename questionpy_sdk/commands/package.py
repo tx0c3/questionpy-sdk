@@ -7,7 +7,6 @@ import subprocess
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import ModuleType
-from typing import Optional
 
 import click
 
@@ -18,7 +17,7 @@ from questionpy_sdk.models import PackageConfig
 from questionpy_sdk.package import PackageBuilder
 
 
-def validate_out_path(context: click.Context, _parameter: click.Parameter, value: Optional[Path]) -> Optional[Path]:
+def validate_out_path(context: click.Context, _parameter: click.Parameter, value: Path | None) -> Path | None:
     if value and value.suffix != ".qpy":
         raise click.BadParameter("Packages need the extension '.qpy'.", ctx=context)
     return value
@@ -28,7 +27,7 @@ def validate_out_path(context: click.Context, _parameter: click.Parameter, value
 @click.argument("source", type=click.Path(exists=True, file_okay=False, path_type=Path))
 @click.option("--config", "-c", "config_path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
 @click.option("--out", "-o", "out_path", callback=validate_out_path, type=click.Path(path_type=Path))
-def package(source: Path, config_path: Optional[Path], out_path: Optional[Path]) -> None:
+def package(source: Path, config_path: Path | None, out_path: Path | None) -> None:
     if not config_path:
         config_path = source / PACKAGE_CONFIG_FILENAME
 

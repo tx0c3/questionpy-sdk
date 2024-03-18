@@ -5,31 +5,30 @@
 import json
 import random
 from pathlib import Path
-from typing import Optional
 
 import aiohttp_jinja2
 from aiohttp import web
 from aiohttp.web_exceptions import HTTPBadRequest
 from jinja2 import FileSystemLoader
+
 from questionpy_common.constants import MiB
 from questionpy_common.elements import OptionsFormDefinition
 from questionpy_common.environment import RequestUser
-from questionpy_server import WorkerPool
-from questionpy_server.worker.runtime.package_location import PackageLocation
-from questionpy_server.worker.runtime.messages import WorkerUnknownError
-from questionpy_server.worker.worker import Worker
-from questionpy_server.worker.worker.thread import ThreadWorker
-
 from questionpy_sdk.webserver.attempt import get_attempt_scored_context, get_attempt_started_context
 from questionpy_sdk.webserver.context import contextualize
 from questionpy_sdk.webserver.question_ui import QuestionDisplayOptions
 from questionpy_sdk.webserver.state_storage import QuestionStateStorage, add_repetition, parse_form_data
+from questionpy_server import WorkerPool
+from questionpy_server.worker.runtime.messages import WorkerUnknownError
+from questionpy_server.worker.runtime.package_location import PackageLocation
+from questionpy_server.worker.worker import Worker
+from questionpy_server.worker.worker.thread import ThreadWorker
 
 routes = web.RouteTableDef()
 
 
 def set_cookie(
-    response: web.Response, name: str, value: str, max_age: Optional[int] = 3600, same_site: Optional[str] = "Strict"
+    response: web.Response, name: str, value: str, max_age: int | None = 3600, same_site: str | None = "Strict"
 ) -> None:
     response.set_cookie(name=name, value=value, max_age=max_age, samesite=same_site)
 

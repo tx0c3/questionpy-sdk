@@ -5,17 +5,17 @@
 import re
 
 import pytest
+
+from questionpy.form import equals, is_checked
+from questionpy.form.validation import FormError, FormReferenceError, validate_form
 from questionpy_common.elements import (
-    OptionsFormDefinition,
-    StaticTextElement,
-    FormSection,
     CheckboxElement,
+    FormSection,
+    OptionsFormDefinition,
     RepetitionElement,
+    StaticTextElement,
     TextInputElement,
 )
-
-from questionpy.form import is_checked, equals
-from questionpy.form.validation import FormReferenceError, validate_form, FormError
 
 
 def test_should_not_raise_when_form_is_valid() -> None:

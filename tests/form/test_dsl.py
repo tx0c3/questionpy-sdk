@@ -2,10 +2,10 @@
 #  The QuestionPy SDK is free software released under terms of the MIT license. See LICENSE.md.
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
-from typing import Optional, List, Literal, Set, Any
+from typing import Any, Literal, Optional
 
 import pytest
-from pydantic import ValidationError, TypeAdapter
+from pydantic import TypeAdapter, ValidationError
 
 from questionpy.form import *  # pylint: disable=wildcard-import
 
@@ -19,7 +19,7 @@ class SimpleFormModel(FormModel):
 
 
 class NestedFormModel(FormModel):
-    general_field: Optional[str] = text_input("General Text Input")
+    general_field: str | None = text_input("General Text Input")
 
     sect: SimpleFormModel = section("My Header", SimpleFormModel)
     grp: SimpleFormModel = group("My Group", SimpleFormModel)
@@ -136,7 +136,7 @@ def test_should_raise_ValidationError_when_required_option_is_missing() -> None:
         ),
     ],
 )
-def test_should_render_correct_form(initializer: object, expected_elements: List[FormElement]) -> None:
+def test_should_render_correct_form(initializer: object, expected_elements: list[FormElement]) -> None:
     class TheModel(FormModel):
         # mypy crashes without the type annotation
         field: Any = initializer
@@ -176,8 +176,8 @@ def test_should_render_correct_form(initializer: object, expected_elements: List
             ...,
             None,
         ),
-        (Set[MyOptionEnum], select("", MyOptionEnum, required=False, multiple=True), ["OPT_1"], {MyOptionEnum.OPT_1}),
-        (Set[MyOptionEnum], select("", MyOptionEnum, required=False, multiple=True), ..., set()),
+        (set[MyOptionEnum], select("", MyOptionEnum, required=False, multiple=True), ["OPT_1"], {MyOptionEnum.OPT_1}),
+        (set[MyOptionEnum], select("", MyOptionEnum, required=False, multiple=True), ..., set()),
         # hidden
         (str, hidden("value"), "value", "value"),
         (Literal["value"], hidden("value"), "value", "value"),
@@ -221,7 +221,7 @@ def test_should_parse_correctly_when_input_is_valid(
         # select
         (Optional[MyOptionEnum], select("", MyOptionEnum), "not an option"),
         (MyOptionEnum, select("", MyOptionEnum, required=True), ...),
-        (Set[MyOptionEnum], select("", MyOptionEnum, multiple=True), ["not an option"]),
+        (set[MyOptionEnum], select("", MyOptionEnum, multiple=True), ["not an option"]),
         # hidden
         (Literal["value"], hidden("value"), "something else"),
         (str, hidden("value"), ...),
@@ -259,8 +259,8 @@ def test_should_raise_ValidationError_when_input_is_invalid(
         (Optional[MyOptionEnum], radio_group("", MyOptionEnum, required=True)),
         # select
         (str, select("", MyOptionEnum, required=True)),
-        (Set[MyOptionEnum], select("", MyOptionEnum)),
-        (Set[MyOptionEnum], select("", MyOptionEnum, required=True)),
+        (set[MyOptionEnum], select("", MyOptionEnum)),
+        (set[MyOptionEnum], select("", MyOptionEnum, required=True)),
         (MyOptionEnum, select("", MyOptionEnum, multiple=True)),
         # hidden
         (Optional[str], hidden("value")),
@@ -295,7 +295,7 @@ def test_OptionEnum_should_deserialize_from_value() -> None:
 
 def test_group_without_required_fields_can_be_omitted() -> None:
     class Inner(FormModel):
-        optional: Optional[str] = text_input("")
+        optional: str | None = text_input("")
 
     class Outer(FormModel):
         grp: Inner = group("", Inner)

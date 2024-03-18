@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import ClassVar, Generic, TypeVar, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar, Generic, TypeVar
 
 from pydantic import BaseModel
-from questionpy_common.api.attempt import BaseAttempt, AttemptScoredModel, ScoreModel
+
+from questionpy_common.api.attempt import AttemptScoredModel, BaseAttempt, ScoreModel
 
 from ._util import get_type_arg
 
@@ -29,7 +30,7 @@ class Attempt(BaseAttempt, ABC, Generic[_Q, _AS, _SS]):
     scoring_state_class: ClassVar[type[BaseScoringState]] = BaseScoringState
 
     def __init__(
-        self, question: _Q, attempt_state: _AS, response: Optional[dict] = None, scoring_state: Optional[_SS] = None
+        self, question: _Q, attempt_state: _AS, response: dict | None = None, scoring_state: _SS | None = None
     ) -> None:
         self.question = question
         self.attempt_state = attempt_state

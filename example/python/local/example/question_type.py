@@ -1,19 +1,19 @@
 from importlib.resources import files
 
+from questionpy import (
+    Attempt,
+    AttemptModel,
+    AttemptUi,
+    BaseAttemptState,
+    BaseQuestionState,
+    BaseScoringState,
+    Question,
+    QuestionType,
+    ScoringCode,
+)
 from questionpy_common.api.attempt import ScoreModel
 from questionpy_common.api.question import QuestionModel, ScoringMethod
 
-from questionpy import (
-    Attempt,
-    BaseAttemptState,
-    Question,
-    BaseQuestionState,
-    QuestionType,
-    AttemptUi,
-    AttemptModel,
-    ScoringCode,
-    BaseScoringState,
-)
 from .form import MyModel
 
 

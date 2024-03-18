@@ -1,4 +1,4 @@
-from typing import TypeVar, Union, Literal, get_origin, get_args
+from typing import Literal, TypeVar, get_args, get_origin
 
 _T = TypeVar("_T")
 
@@ -9,8 +9,8 @@ def get_type_arg(
     arg_index: int,
     *,
     bound: type = object,
-    default: Union[_T, Literal["nodefault"]] = "nodefault",
-) -> Union[type, _T]:
+    default: _T | Literal["nodefault"] = "nodefault",
+) -> type | _T:
     """Finds a type arg used by `derived` when inheriting from `generic_base`.
 
     Args:

@@ -4,6 +4,7 @@
 
 import os
 from pathlib import Path
+
 from click.testing import CliRunner
 
 from questionpy_sdk.commands.run import run

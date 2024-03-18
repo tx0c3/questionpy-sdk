@@ -30,6 +30,7 @@ def get_manifest(path: Path) -> ComparableManifest:
 
 class IndexCreator:
     """Handles the creation of the repository index and metadata."""
+
     def __init__(self, root: Path):
         self._root = root
         self._root.mkdir(parents=True, exist_ok=True)
@@ -48,7 +49,7 @@ class IndexCreator:
             api_version=manifest.api_version,
             path=str(path.relative_to(self._root)),
             size=path.stat().st_size,
-            sha256=calculate_hash(path)
+            sha256=calculate_hash(path),
         )
 
         # Check if package already exists.

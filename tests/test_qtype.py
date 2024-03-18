@@ -13,8 +13,16 @@ from questionpy_common.environment import set_qpy_environment
 from questionpy_server.worker.runtime.manager import EnvironmentImpl
 from questionpy_server.worker.runtime.package import ImportablePackage
 
-from questionpy import (QuestionType, Question, BaseQuestionState, Attempt, BaseAttemptState, Environment, RequestUser,
-                        BaseScoringState)
+from questionpy import (
+    QuestionType,
+    Question,
+    BaseQuestionState,
+    Attempt,
+    BaseAttemptState,
+    Environment,
+    RequestUser,
+    BaseScoringState,
+)
 from questionpy.form import FormModel, text_input
 
 
@@ -24,12 +32,12 @@ def environment() -> Generator[Environment, None, None]:
         type="test",
         limits=None,
         request_user=RequestUser(["en"]),
-        main_package=cast(ImportablePackage, SimpleNamespace(manifest=SimpleNamespace(
-            namespace="test_ns", short_name="test_package",
-            version="1.2.3"
-        ))),
+        main_package=cast(
+            ImportablePackage,
+            SimpleNamespace(manifest=SimpleNamespace(namespace="test_ns", short_name="test_package", version="1.2.3")),
+        ),
         packages={},
-        _on_request_callbacks=[]
+        _on_request_callbacks=[],
     )
     set_qpy_environment(env)
     try:
@@ -149,10 +157,8 @@ def test_should_raise_with_generic_form_model() -> None:
 QUESTION_STATE_DICT = {
     "package_name": "test_ns.test_package",
     "package_version": "1.2.3",
-    "options": {
-        "input": "something"
-    },
-    "my_question_field": 42
+    "options": {"input": "something"},
+    "my_question_field": 42,
 }
 
 ATTEMPT_STATE_DICT = {
@@ -163,9 +169,7 @@ ATTEMPT_STATE_DICT = {
 
 def test_should_create_question_from_options() -> None:
     qtype = QuestionType(SomeModel, SomeQuestion)
-    question = qtype.create_question_from_options(None, {
-        "input": "something"
-    })
+    question = qtype.create_question_from_options(None, {"input": "something"})
 
     assert isinstance(question, SomeQuestion)
     assert json.loads(question.export_question_state()) == QUESTION_STATE_DICT

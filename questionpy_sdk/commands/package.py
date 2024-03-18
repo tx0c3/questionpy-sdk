@@ -19,7 +19,7 @@ from questionpy_sdk.package import PackageBuilder
 
 
 def validate_out_path(context: click.Context, _parameter: click.Parameter, value: Optional[Path]) -> Optional[Path]:
-    if value and value.suffix != '.qpy':
+    if value and value.suffix != ".qpy":
         raise click.BadParameter("Packages need the extension '.qpy'.", ctx=context)
     return value
 

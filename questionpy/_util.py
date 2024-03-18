@@ -3,8 +3,14 @@ from typing import TypeVar, Union, Literal, get_origin, get_args
 _T = TypeVar("_T")
 
 
-def get_type_arg(derived: type, generic_base: type, arg_index: int, *,
-                 bound: type = object, default: Union[_T, Literal["nodefault"]] = "nodefault") -> Union[type, _T]:
+def get_type_arg(
+    derived: type,
+    generic_base: type,
+    arg_index: int,
+    *,
+    bound: type = object,
+    default: Union[_T, Literal["nodefault"]] = "nodefault",
+) -> Union[type, _T]:
     """Finds a type arg used by `derived` when inheriting from `generic_base`.
 
     Args:
@@ -41,8 +47,9 @@ def get_type_arg(derived: type, generic_base: type, arg_index: int, *,
 
             arg = args[arg_index]
             if not isinstance(arg, type) or not issubclass(arg, bound):
-                raise TypeError(f"Type parameter '{arg!r}' of {generic_base.__name__} is not a subclass of "
-                                f"{bound.__name__}")
+                raise TypeError(
+                    f"Type parameter '{arg!r}' of {generic_base.__name__} is not a subclass of " f"{bound.__name__}"
+                )
             return arg
 
     raise TypeError(f"{derived.__name__} is not a direct subclass of {generic_base.__name__}")

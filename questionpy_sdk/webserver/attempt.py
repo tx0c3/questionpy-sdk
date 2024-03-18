@@ -7,35 +7,37 @@ from questionpy_common.api.attempt import AttemptUi
 from questionpy_sdk.webserver.question_ui import QuestionUIRenderer, QuestionDisplayOptions
 
 
-def get_attempt_started_context(ui: AttemptUi, last_attempt_data: dict,
-                                display_options: QuestionDisplayOptions, seed: int) -> dict:
+def get_attempt_started_context(
+    ui: AttemptUi, last_attempt_data: dict, display_options: QuestionDisplayOptions, seed: int
+) -> dict:
     renderer = QuestionUIRenderer(xml=ui.content, placeholders=ui.placeholders, seed=seed)
     return {
-        'question_html': renderer.render_formulation(
-            attempt=last_attempt_data,
-            options=QuestionDisplayOptions(general_feedback=False, feedback=False)),
-        'options': display_options.model_dump(exclude={'context', 'readonly'}),
-        'form_disabled': False
+        "question_html": renderer.render_formulation(
+            attempt=last_attempt_data, options=QuestionDisplayOptions(general_feedback=False, feedback=False)
+        ),
+        "options": display_options.model_dump(exclude={"context", "readonly"}),
+        "form_disabled": False,
     }
 
 
-def get_attempt_scored_context(ui: AttemptUi, last_attempt_data: dict,
-                               display_options: QuestionDisplayOptions, seed: int) -> dict:
+def get_attempt_scored_context(
+    ui: AttemptUi, last_attempt_data: dict, display_options: QuestionDisplayOptions, seed: int
+) -> dict:
     renderer = QuestionUIRenderer(xml=ui.content, placeholders=ui.placeholders, seed=seed)
     context = {
-        'question_html': renderer.render_formulation(attempt=last_attempt_data,
-                                                     options=display_options),
-        'options': display_options.model_dump(exclude={'context', 'readonly'}),
-        'form_disabled': True
+        "question_html": renderer.render_formulation(attempt=last_attempt_data, options=display_options),
+        "options": display_options.model_dump(exclude={"context", "readonly"}),
+        "form_disabled": True,
     }
 
     if display_options.general_feedback:
-        context['general_feedback'] = renderer.render_general_feedback(attempt=last_attempt_data,
-                                                                       options=display_options)
+        context["general_feedback"] = renderer.render_general_feedback(
+            attempt=last_attempt_data, options=display_options
+        )
     if display_options.feedback:
-        context['specific_feedback'] = renderer.render_specific_feedback(attempt=last_attempt_data,
-                                                                         options=display_options)
+        context["specific_feedback"] = renderer.render_specific_feedback(
+            attempt=last_attempt_data, options=display_options
+        )
     if display_options.right_answer:
-        context['right_answer'] = renderer.render_right_answer(attempt=last_attempt_data,
-                                                               options=display_options)
+        context["right_answer"] = renderer.render_right_answer(attempt=last_attempt_data, options=display_options)
     return context

@@ -1,5 +1,18 @@
-from questionpy.form import FormModel, text_input, OptionEnum, option, select, group, static_text, is_checked,\
-    checkbox, radio_group, hidden, repeat, is_not_checked
+from questionpy.form import (
+    FormModel,
+    text_input,
+    OptionEnum,
+    option,
+    select,
+    group,
+    static_text,
+    is_checked,
+    checkbox,
+    radio_group,
+    hidden,
+    repeat,
+    is_not_checked,
+)
 
 
 class NameGroup(FormModel):
@@ -18,12 +31,19 @@ class Participants(FormModel):
 
 
 class MyModel(FormModel):
-    static = static_text("Some static text", """Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+    static = static_text(
+        "Some static text",
+        """Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
     nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
-    et justo duo dolores et ea rebum.""")
+    et justo duo dolores et ea rebum.""",
+    )
     input = text_input("My second Input", required=True, hide_if=[is_checked("chk")])
-    chk = checkbox("Left label", None, help="""Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-    nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.""")
+    chk = checkbox(
+        "Left label",
+        None,
+        help="""Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+    nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.""",
+    )
     radio = radio_group("My Radio Group", MyOptions)
     my_select = select("My select box", MyOptions, multiple=True)
     my_hidden = hidden("foo")

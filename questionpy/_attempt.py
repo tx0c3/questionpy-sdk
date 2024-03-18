@@ -28,8 +28,9 @@ class Attempt(BaseAttempt, ABC, Generic[_Q, _AS, _SS]):
     attempt_state_class: ClassVar[type[BaseAttemptState]] = BaseAttemptState
     scoring_state_class: ClassVar[type[BaseScoringState]] = BaseScoringState
 
-    def __init__(self, question: _Q, attempt_state: _AS,
-                 response: Optional[dict] = None, scoring_state: Optional[_SS] = None) -> None:
+    def __init__(
+        self, question: _Q, attempt_state: _AS, response: Optional[dict] = None, scoring_state: Optional[_SS] = None
+    ) -> None:
         self.question = question
         self.attempt_state = attempt_state
         self.response = response

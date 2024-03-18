@@ -10,10 +10,12 @@ from typing import TYPE_CHECKING, Any, ClassVar, Literal, get_args, get_origin
 
 from pydantic import BaseModel, Field
 from pydantic._internal._model_construction import ModelMetaclass  # noqa: PLC2701
-from pydantic.fields import FieldInfo
 from pydantic_core import CoreSchema, core_schema
 
 from questionpy_common.elements import FormElement, FormSection, OptionsFormDefinition
+
+if TYPE_CHECKING:
+    from pydantic.fields import FieldInfo
 
 
 @dataclass

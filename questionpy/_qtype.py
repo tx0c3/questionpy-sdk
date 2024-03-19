@@ -126,7 +126,7 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
 
         if old_state:
             state = self.question_class.state_class.model_validate_json(old_state)
-            # TBD: Should we also update package_name and package_version here? Or check that they match?
+            # TODO: Should we also update package_name and package_version here? Or check that they match?
             state.options = parsed_form_data
         else:
             env = get_qpy_environment()

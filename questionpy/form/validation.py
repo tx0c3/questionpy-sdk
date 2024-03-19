@@ -107,7 +107,7 @@ def _get_children(node: _FormNode) -> Sequence[_FormNode]:
     if isinstance(node, OptionsFormDefinition):
         return *node.general, *node.sections
 
-    if isinstance(node, (FormSection, GroupElement, RepetitionElement)):
+    if isinstance(node, FormSection | GroupElement | RepetitionElement):
         return node.elements
 
     # Node is a leaf, i.e. can't have children.

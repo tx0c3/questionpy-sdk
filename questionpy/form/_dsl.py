@@ -185,7 +185,7 @@ def text_input(
             disable_if=_listify(disable_if),
             hide_if=_listify(hide_if),
         ),
-        Optional[str] if not required or disable_if or hide_if else str,
+        str | None if not required or disable_if or hide_if else str,
         None if not required or disable_if or hide_if else ...,
     )
 
@@ -399,7 +399,7 @@ def radio_group(
             disable_if=_listify(disable_if),
             hide_if=_listify(hide_if),
         ),
-        Optional[enum] if not required or disable_if or hide_if else enum,
+        enum | None if not required or disable_if or hide_if else enum,
         None if not required or disable_if or hide_if else ...,
     )
 
@@ -505,10 +505,10 @@ def select(
         expected_type = set[enum]  # type: ignore[valid-type]
         default = set() if not required or disable_if or hide_if else ...
     elif not required or disable_if or hide_if:
-        expected_type = Optional[enum]  # type: ignore[valid-type, assignment]
+        expected_type = enum | None  # type: ignore[assignment]
         default = None
     else:
-        expected_type = enum  # type: ignore[valid-type]
+        expected_type = enum
         default = ...
 
     return _FieldInfo(
@@ -579,7 +579,7 @@ def hidden(value: _S, *, disable_if: _ZeroOrMoreConditions = None, hide_if: _Zer
             lambda name: HiddenElement(
                 name=name, value=value, disable_if=_listify(disable_if), hide_if=_listify(hide_if)
             ),
-            Optional[Literal[value]] if disable_if or hide_if else Literal[value],
+            Optional[Literal[value]] if disable_if or hide_if else Literal[value],  # noqa: UP007
             None if disable_if or hide_if else ...,
         ),
     )

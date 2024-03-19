@@ -246,13 +246,21 @@ async function handle_submit(event) {
     // prevent reload on submit
     event.preventDefault();
 
-    const json_form_data = create_json_form_data(event.target);
-    const headers = {'Content-Type': 'application/json'}
-    const response = await post_http_request('/submit', headers, json_form_data);
-    if (response.status == 200) {
-        document.getElementById('submit_success_info').hidden = null;
+    const button = event.currentTarget;
+    const form = document.getElementById(button.getAttribute('form'));
+    const route = button.getAttribute('data-route');
+    const successAction = form.getAttribute('data-success-action');
+    const json_form_data = create_json_form_data(form);
+    const headers = {'Content-Type': 'application/json'};
+    const response = await post_http_request(route, headers, json_form_data);
+    if (response.status >= 200 && response.status < 300) {
+        if (successAction === "success-info") {
+            document.getElementById('submit_success_info').hidden = false;
+        } else if (successAction === "reload") {
+            window.location.reload();
+        }
     } else {
-        alert('An error occured.');
+        alert(response.statusText);
     }
 }
 
@@ -336,13 +344,30 @@ function show_help_dialog(event) {
  */
 let help_icon = null;
 
+
+async function restart_attempt(event) {
+    event.preventDefault();
+
+    const button = event.currentTarget;
+    const route = button.getAttribute('data-route');
+    const headers = {'Content-Type': 'application/json'}
+    const response = await post_http_request(route, headers, "{}");
+    if (response.status >= 200 && response.status < 300) {
+        window.location.reload();
+    } else {
+        alert(response.statusText);
+    }
+
+}
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const elements = get_elements_with_conditions();
     // check conditions manually. without the change event
     check_all_element_conditions(elements);
 
-    const form = document.querySelector('form');
-    form.addEventListener('submit', handle_submit);
+    const buttons = document.querySelectorAll('button[type="submit"]');
+    buttons.forEach(button => button.addEventListener('click', handle_submit));
 
     const repetition_buttons = document.getElementsByClassName("repetition-button");
     Array.from(repetition_buttons).forEach(button => button.addEventListener("click", add_repetition_element));
@@ -354,4 +379,14 @@ document.addEventListener("DOMContentLoaded", function () {
     Array.from(help_icons).forEach(icon => icon.addEventListener("click", show_help_dialog));
 
     document.addEventListener('click', hide_help_dialogs);
+
+    const restart_button = document.getElementById("restart-attempt-button")
+    if (restart_button) {
+        restart_button.addEventListener('click', restart_attempt)
+    }
+
+    const edit_button = document.getElementById("edit-attempt-button")
+    if (edit_button) {
+        edit_button.addEventListener('click', restart_attempt)
+    }
 })

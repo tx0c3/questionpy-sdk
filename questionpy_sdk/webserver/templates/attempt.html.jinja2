@@ -1,0 +1,71 @@
+{% extends "page.html.jinja2" %}
+{% import "macros.jinja2" as macros %}
+
+{% block title %}Question Preview{%  endblock %}
+{% block header %}
+    <h1>Question Preview</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="container-question-preview">
+        <form id="question-preview" action="/submit" data-success-action="reload">
+            {{ question_html|safe }}
+        </form>
+        <button id="save-attempt-button" type="submit" data-route="/attempt/save" form="question-preview" {% if form_disabled %}disabled{% endif %}>Save</button>
+        <button id="submit-attempt-button" type="submit" data-route="/attempt" form="question-preview" {% if form_disabled %}disabled{% endif %}>Save and submit</button>
+        <button id="restart-attempt-button" type="button" data-route="/attempt/restart" {% if not form_disabled %}disabled{% endif %}>Restart</button>
+        <button id="edit-attempt-button" type="button" data-route="/attempt/edit" {% if not form_disabled %}disabled{% endif %}>Edit</button>
+    </div>
+
+    {% if general_feedback or specific_feedback or right_answer %}
+        <div class="container-feedback">
+            {% if general_feedback %}
+                <div class="container-general-feedback">
+                    {{ general_feedback|safe }}
+                </div>
+            {% endif %}
+
+            {% if specific_feedback %}
+                <div class="container-specific-feedback">
+                    {{ specific_feedback|safe }}
+                </div>
+            {% endif %}
+
+            {% if right_answer %}
+                <div class="container-right-answer">
+                    {{ right_answer|safe }}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div class="container-display-options">
+        <form id="question-display-options" action="/submit" data-success-action="reload">
+            <h2>Display Options</h2>
+            <table>
+                <tbody>
+                    {% for field_name, initial_value in options.items() %}
+                    <tr>
+                        <td>{{ field_name.replace('_', ' ') | capitalize }}:</td>
+                        <td>
+                            <select name="{{ field_name }}">
+                                <option value="true" {% if initial_value %}selected{% endif %}>True</option>
+                                <option value="false" {% if not initial_value %}selected{% endif %}>False</option>
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td><button type="submit" form="question-display-options" data-route="/attempt/display-options">Update display options</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    {# TODO: More Preview Settings #}
+    {# TODO: Role selection (admin, teacher, student, ...) #}
+    {# TODO: Locale selection #}
+
+{% endblock %}

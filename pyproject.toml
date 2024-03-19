@@ -27,9 +27,10 @@ aiohttp = "^3.8.1"
 pydantic = "^2.4, !=2.6.0"
 PyYAML = "^6.0"
 questionpy-common = { git = "https://github.com/questionpy-org/questionpy-common.git", rev = "cdc3bad516df137651e14d81fb6d1bfde11ceaaf" }
-questionpy-server = { git = "https://github.com/questionpy-org/questionpy-server.git", rev = "a87322bef6ee18407bd47aa1b0ccf0865a9421d0" }
+questionpy-server = { git = "https://github.com/questionpy-org/questionpy-server.git", rev = "3ee63d752667eda33157305f7815a096d79daf81" }
 jinja2 = "^3.1.2"
 aiohttp-jinja2 = "^1.5"
+lxml = "^5.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.17.0"
@@ -43,6 +44,7 @@ types-PyYAML = "^6.0.11"
 coverage = { extras = ["toml"], version = "^7.2.1" }
 tox = "^4.2.6"
 selenium = "^4.11.2"
+lxml-stubs = "^0.5.1"
 
 [tool.poetry.scripts]
 questionpy-sdk = 'questionpy_sdk.__main__:cli'
@@ -63,7 +65,7 @@ source = ["questionpy", "questionpy_sdk"]
 [tool.pylint]
 
 [tool.pylint.MAIN]
-extension-pkg-allow-list = "pydantic"
+extension-pkg-allow-list = ["pydantic", "lxml"]
 # pylint_pytest removes some false positives when checking tests
 load-plugins = "pylint_pytest"
 fail-on = ["E", "F"]

@@ -257,7 +257,9 @@ class QuestionUIRenderer:
             raw_value = self.placeholders[key]
 
             if clean_option.lower() not in {"clean", "noclean"}:
-                assert clean_option.lower() == "plain"
+                if clean_option.lower() != "plain":
+                    msg = f"clean_option expected to have value 'plain', found '{clean_option}' instead"
+                    raise ValueError(msg)
                 # Treat the value as plain text
                 root = etree.Element("string")
                 root.text = etree.CDATA(raw_value)

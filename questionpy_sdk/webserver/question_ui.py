@@ -319,7 +319,8 @@ class QuestionUIRenderer:
                 if parent is not None:
                     parent.remove(element)
 
-    def set_input_values_and_readonly(
+    # TODO: refactor to reduce complexity
+    def set_input_values_and_readonly(  # noqa: C901
         self,
         xpath: etree.XPathDocumentEvaluator,
         attempt: dict | None,
@@ -365,7 +366,8 @@ class QuestionUIRenderer:
                 elif type_attr not in {"button", "submit", "hidden"}:
                     element.set("value", last_value)
 
-    def soften_validation(self, xpath: etree.XPathDocumentEvaluator) -> None:
+    # TODO: refactor to reduce complexity
+    def soften_validation(self, xpath: etree.XPathDocumentEvaluator) -> None:  # noqa: C901
         """Replaces the HTML attributes `pattern`, `required`, `minlength`, `maxlength`, `min, `max` so that submission
         is not prevented.
 
@@ -446,7 +448,8 @@ class QuestionUIRenderer:
                 # Move each child element back to its parent at the correct position
                 element.append(child)
 
-    def clean_up(self, xpath: etree.XPathDocumentEvaluator) -> None:
+    # TODO: refactor to reduce complexity
+    def clean_up(self, xpath: etree.XPathDocumentEvaluator) -> None:  # noqa: C901
         """Removes remaining QuestionPy elements and attributes as well as comments and xmlns declarations."""
         for element in assert_element_list(xpath("//qpy:*")):
             parent = element.getparent()

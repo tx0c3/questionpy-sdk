@@ -68,7 +68,7 @@ def _install_dependencies(target: PackageBuilder, config_path: Path, config: Pac
         return
 
     with TemporaryDirectory(prefix=f"qpy_{config.short_name}") as tempdir:
-        subprocess.run(["pip", "install", "--target", tempdir, *pip_args], check=True, capture_output=True)
+        subprocess.run(["pip", "install", "--target", tempdir, *pip_args], check=True, capture_output=True)  # noqa: S603, S607
         target.write_glob(Path(tempdir), "**/*", prefix="dependencies/site-packages")
 
 

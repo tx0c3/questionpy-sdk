@@ -24,7 +24,7 @@ questionpy-sdk = 'questionpy_sdk.__main__:cli'
 
 [tool.poetry.dependencies]
 click = "8.1.3"
-python = "^3.9"
+python = "^3.11"
 aiohttp = "^3.8.1"
 # 2.6.0 breaks us because of <https://github.com/pydantic/pydantic/issues/8697>.
 pydantic = "^2.4, !=2.6.0"

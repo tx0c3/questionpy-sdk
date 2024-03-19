@@ -32,7 +32,7 @@ def test_parse_form_data_should_not_raise_if_valid() -> None:
     assert "general" not in parsed_form_data  # Elements in 'general' should be at the root
 
 
-@pytest.mark.parametrize("increment", (1, 2, 100, 0, -1))
+@pytest.mark.parametrize("increment", [1, 2, 100, 0, -1])
 def test_add_repetition_should_add_repetition_for_valid_input(increment: int) -> None:
     """Test if add_repetition adds 'increment' amount of repetitions to the referenced repetition element."""
     reference = REPETITION_REF.replace("]", "").split("[")

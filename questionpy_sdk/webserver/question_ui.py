@@ -26,7 +26,8 @@ def assert_element_list(query: Any) -> list[etree._Element]:
         TypeError: If the result is not a list.
     """
     if not isinstance(query, list):
-        raise TypeError("XPath query result is not a list.")
+        msg = "XPath query result is not a list."
+        raise TypeError(msg)
 
     return query
 
@@ -199,7 +200,8 @@ class QuestionUIRenderer:
         formulations = self.question.findall(f".//{{{self.QPY_NAMESPACE}}}formulation")
 
         if not formulations:
-            raise FormulationElementMissingError("Question UI XML contains no 'qpy:formulation' element")
+            msg = "Question UI XML contains no 'qpy:formulation' element"
+            raise FormulationElementMissingError(msg)
 
         return self.render_part(formulations[0], attempt, options)
 

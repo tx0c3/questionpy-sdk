@@ -41,7 +41,8 @@ def _unflatten(flat_form_data: dict[str, str]) -> dict[str, Any]:
 
     result = _convert_repetition_dict_to_list(unflattened_dict)
     if not isinstance(result, dict):
-        raise ValueError("The result is not a dictionary.")
+        msg = "The result is not a dictionary."
+        raise TypeError(msg)
 
     return result
 

@@ -101,7 +101,7 @@ def _substring_in_cxd_element(element: CxdFormElement | CxdOption, substring: st
         if substring in value:
             return True
 
-    if isinstance(element, (CxdRadioGroupElement, CxdSelectElement)):
+    if isinstance(element, CxdRadioGroupElement | CxdSelectElement):
         return any(_substring_in_cxd_element(opt, substring) for opt in element.cxd_options)
     if isinstance(element, CxdGroupElement):
         return any(_substring_in_cxd_element(el, substring) for el in element.cxd_elements)

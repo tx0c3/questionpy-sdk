@@ -150,28 +150,28 @@ def test_should_render_correct_form(initializer: object, expected_elements: list
         # text_input
         (str, form.text_input("", required=True), "valid", "valid"),
         (str, form.text_input("", required=True), b"coercible", "coercible"),
-        (Optional[str], form.text_input(""), "valid", "valid"),
-        (Optional[str], form.text_input(""), None, None),
-        (Optional[str], form.text_input(""), ..., None),
+        (str | None, form.text_input(""), "valid", "valid"),
+        (str | None, form.text_input(""), None, None),
+        (str | None, form.text_input(""), ..., None),
         # checkbox
         (bool, form.checkbox("", "", required=True), True, True),
         (bool, form.checkbox("", "", required=False), True, True),
         (bool, form.checkbox("", "", required=False), False, False),
         (bool, form.checkbox("", "", required=False), ..., False),
         # radio_group
-        (Optional[MyOptionEnum], form.radio_group("", MyOptionEnum), ..., None),
+        (MyOptionEnum | None, form.radio_group("", MyOptionEnum), ..., None),
         (MyOptionEnum, form.radio_group("", MyOptionEnum, required=True), "OPT_1", MyOptionEnum.OPT_1),
         (
-            Optional[MyOptionEnum],
+            MyOptionEnum | None,
             form.radio_group("", MyOptionEnum, required=True, disable_if=form.is_checked("field")),
             "OPT_1",
             MyOptionEnum.OPT_1,
         ),
         # select
         (MyOptionEnum, form.select("", MyOptionEnum, required=True, multiple=False), "OPT_1", MyOptionEnum.OPT_1),
-        (Optional[MyOptionEnum], form.select("", MyOptionEnum, required=False, multiple=False), ..., None),
+        (MyOptionEnum | None, form.select("", MyOptionEnum, required=False, multiple=False), ..., None),
         (
-            Optional[MyOptionEnum],
+            MyOptionEnum | None,
             form.select("", MyOptionEnum, required=True, multiple=False, disable_if=form.is_checked("field")),
             ...,
             None,
@@ -186,7 +186,7 @@ def test_should_render_correct_form(initializer: object, expected_elements: list
         # hidden
         (str, form.hidden("value"), "value", "value"),
         (Literal["value"], form.hidden("value"), "value", "value"),
-        (Optional[Literal["value"]], form.hidden("value", disable_if=form.is_checked("field")), ..., None),
+        (Optional[Literal["value"]], form.hidden("value", disable_if=form.is_checked("field")), ..., None),  # noqa: UP007
         # group
         (SimpleFormModel, form.group("", SimpleFormModel), {"input": "abc"}, SimpleFormModel(input="abc")),
         # repetition
@@ -217,14 +217,14 @@ def test_should_parse_correctly_when_input_is_valid(
         # text_input
         (str, form.text_input("", required=True), ...),
         (str, form.text_input("", required=True), None),
-        (Optional[str], form.text_input(""), {}),
+        (str | None, form.text_input(""), {}),
         # checkbox
         (bool, form.checkbox("", "", required=False), 42),
         # radio_group
-        (Optional[MyOptionEnum], form.radio_group("", MyOptionEnum), "not an option"),
+        (MyOptionEnum | None, form.radio_group("", MyOptionEnum), "not an option"),
         (MyOptionEnum, form.radio_group("", MyOptionEnum, required=True), ...),
         # select
-        (Optional[MyOptionEnum], form.select("", MyOptionEnum), "not an option"),
+        (MyOptionEnum | None, form.select("", MyOptionEnum), "not an option"),
         (MyOptionEnum, form.select("", MyOptionEnum, required=True), ...),
         (set[MyOptionEnum], form.select("", MyOptionEnum, multiple=True), ["not an option"]),
         # hidden
@@ -254,21 +254,21 @@ def test_should_raise_validation_error_when_input_is_invalid(
     [
         # text_input
         (str, form.text_input("", required=False)),
-        (Optional[str], form.text_input("", required=True)),
+        (str | None, form.text_input("", required=True)),
         (str, form.text_input("", required=True, disable_if=form.is_checked("field"))),  # Required, but conditional
         # checkbox
         (str, form.checkbox("", "")),
         # radio_group
         (str, form.radio_group("", MyOptionEnum, required=True)),
         (MyOptionEnum, form.radio_group("", MyOptionEnum)),
-        (Optional[MyOptionEnum], form.radio_group("", MyOptionEnum, required=True)),
+        (MyOptionEnum | None, form.radio_group("", MyOptionEnum, required=True)),
         # select
         (str, form.select("", MyOptionEnum, required=True)),
         (set[MyOptionEnum], form.select("", MyOptionEnum)),
         (set[MyOptionEnum], form.select("", MyOptionEnum, required=True)),
         (MyOptionEnum, form.select("", MyOptionEnum, multiple=True)),
         # hidden
-        (Optional[str], form.hidden("value")),
+        (str | None, form.hidden("value")),
         # group
         (dict, form.group("", SimpleFormModel)),
         # repetition

@@ -16,20 +16,13 @@ def _unflatten(flat_form_data: dict[str, str]) -> dict[str, Any]:
     These strings are split to create a nested dictionary, where each key is one part of the reference.
     Additionally: Dictionaries with only numerical keys (Repetition Elements) are replaced by lists.
 
-    Example:
-        This::
-
-            {
-                'general[my_hidden]': 'foo',
-                'general[my_repetition][1][role]': 'OPT_1',
-                'general[my_repetition][1][name][first_name]': 'John '
-            }
-        becomes::
-
-            {
-                "my_hidden": "foo",
-                "my_repetition": [{"name": {"first_name": "John "}, "role": "OPT_1"}],
-            }
+    Examples:
+        >>> _unflatten({
+        ...     "general[my_hidden]": "foo",
+        ...     "general[my_repetition][1][role]": "OPT_1",
+        ...     "general[my_repetition][1][name][first_name]": "John",
+        ... })
+        {'general': {'my_hidden': 'foo', 'my_repetition': {'1': {'role': 'OPT_1', 'name': {'first_name': 'John'}}}}}
     """
     unflattened_dict: dict[str, Any] = {}
     for flat_key, value in flat_form_data.items():
@@ -63,26 +56,19 @@ def _convert_repetition_dict_to_list(dictionary: dict[str, Any]) -> dict[str, An
 
 
 def parse_form_data(form_data: dict) -> dict:
-    """Form data from a flat dictionary is parsed into a nested dictionary.
+    """Parses form data from a flat dictionary into a nested dictionary.
 
     This function parses a dictionary, where the keys are the references to the Form Element from the Options Form.
     The references are used to create a nested dictionary with the form data. Elements in the 'general' section are
     moved to the root of the dictionary.
 
-    Example:
-        This::
-
-            {
-                'general[my_hidden]': 'foo',\n
-                'general[my_repetition][1][role]': 'OPT_1',\n
-                'general[my_repetition][1][name][first_name]': 'John '
-            }
-        becomes::
-
-            {
-                'my_hidden': 'foo',\n
-                'my_repetition': [{'name': {'first_name': 'John '}, 'role': 'OPT_1'}]
-            }
+    Examples:
+        >>> parse_form_data({
+        ...     "general[my_hidden]": "foo",
+        ...     "general[my_repetition][1][role]": "OPT_1",
+        ...     "general[my_repetition][1][name][first_name]": "John",
+        ... })
+        {'my_hidden': 'foo', 'my_repetition': {'1': {'role': 'OPT_1', 'name': {'first_name': 'John'}}}}
     """
     unflattened_form_data = _unflatten(form_data)
     options = unflattened_form_data.get("general", {})

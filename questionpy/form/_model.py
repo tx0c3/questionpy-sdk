@@ -23,13 +23,13 @@ class _OptionInfo:
     label: str
     selected: bool
     value: str | None = None
-    """Set by :meth:`OptionEnum.__init__` because __set_name__ doesn't get called for enum members."""
+    """Set by `OptionEnum.__init__` because __set_name__ doesn't get called for enum members."""
 
 
 class OptionEnum(Enum):
     """Enum specifying the possible options for radio groups and drop-downs.
 
-    Specify options using `option`.
+    Specify options using [`option`][questionpy.form.option].
     """
 
     def __init__(self, option: _OptionInfo) -> None:

@@ -32,23 +32,24 @@ class _CxdFormElement(BaseModel):
         return "_".join(self.path)
 
     def contextualize(self, pattern: Pattern[str], replacement: str) -> None:
-        """QuestionPy FormElements can contain a Pattern in their model fields which is replaced with a value when
-        the OptionsForm is presented to add additional context for the user.
-        Replaces the QPy pattern with the replacement string in model fields which can contain such a pattern.
+        """Replaces patterns in model fields.
+
+        QuestionPy form elements can contain a pattern in their model fields which is replaced with a value when the
+        OptionsForm is presented to add additional context for the user. Replaces the QPy pattern with the replacement
+        string in model fields which can contain such a pattern.
 
         Args:
-            pattern: The QPy Pattern to be replaced. A valid QPy Pattern matches '{qpy:<identifier>}'
-                e.g. '{qpy:repno}'
+            pattern: The QPy Pattern to be replaced. A valid QPy Pattern matches `{qpy:<identifier>}` e.g. `{qpy:repno}`
             replacement: The replacement string
         Returns:
             None
         """
 
     def add_form_data_value(self, element_form_data: Any) -> None:
-        """If there is prior form data available, this it is used to set the CxdFormElements value or 'selected' state.
+        """If there is prior form data available, this it is used to set the `CxdFormElement` value or `selected` state.
 
         Args:
-            element_form_data: Any form data fitting this CxdFormElement
+            element_form_data: Any form data fitting this `CxdFormElement`
 
         Returns:
             None

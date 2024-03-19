@@ -71,15 +71,21 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
     """A question type.
 
     This class is intended to be used in one of two ways:
-    - If you don't need to override any of the default :class:`QuestionType` methods, you should provide your
-      :class:`FormModel` and :class:`Question` subclasses as constructor arguments.
-    - If you do, you should inherit from :class:`QuestionType`, specifying your :class:`FormModel` and :class:`Question`
-      as type arguments:
 
-      >>> class MyOptions(FormModel): ...
-      >>> class MyAttempt(Attempt): ...
-      >>> class MyQuestion(Question[BaseQuestionState[MyOptions], MyAttempt]): ...
-      >>> class MyQuestionType(QuestionType[MyOptions, MyQuestion]): ...  # Your code goes here.
+    - If you don't need to override any of the default [`QuestionType`][questionpy.QuestionType] methods, you should
+      provide your [`FormModel`][questionpy.form.FormModel] and [`Question`][questionpy.Question] subclasses as
+      constructor arguments.
+
+    - If you do, you should inherit from [`QuestionType`][questionpy.QuestionType], specifying your
+      [`FormModel`][questionpy.form.FormModel] and [`Question`][questionpy.Question] as type arguments.
+
+    Examples:
+        This example shows how to subclass [`QuestionType`][questionpy.QuestionType]:
+
+        >>> class MyOptions(FormModel): ...
+        >>> class MyAttempt(Attempt): ...
+        >>> class MyQuestion(Question[BaseQuestionState[MyOptions], MyAttempt]): ...
+        >>> class MyQuestionType(QuestionType[MyOptions, MyQuestion]): ...  # Your code goes here.
     """
 
     # We'd declare these using _F and _Q ideally, but that leads to "Access to generic instance variables via class is
@@ -91,8 +97,8 @@ class QuestionType(BaseQuestionType, Generic[_F, _Q]):
         """Initializes a new question.
 
         Args:
-            options_class: Override the :class:`FormModel` for the question options.
-            question_class: Override the :class:`Question`-class used by this type.
+            options_class: Override the [`FormModel`][questionpy.form.FormModel] for the question options.
+            question_class: Override the [`Question`][questionpy.Question] used by this type.
         """
         if options_class:
             self.options_class = options_class

@@ -62,7 +62,7 @@ class WebServer:
 
 @routes.get("/")
 async def render_options(request: web.Request) -> web.Response:
-    """Get the options form definition that allows a question creator to customize a question."""
+    """Gets the options form definition that allows a question creator to customize a question."""
     webserver: "WebServer" = request.app["sdk_webserver_app"]
     stored_state = webserver.state_storage.get(webserver.package_location)
     old_state = json.dumps(stored_state) if stored_state else None
@@ -82,7 +82,7 @@ async def render_options(request: web.Request) -> web.Response:
 
 @routes.post("/submit")
 async def submit_form(request: web.Request) -> web.Response:
-    """Store the form_data from the Options Form in the StateStorage."""
+    """Stores the form_data from the Options Form in the StateStorage."""
     webserver: "WebServer" = request.app["sdk_webserver_app"]
     data = await request.json()
     parsed_form_data = parse_form_data(data)
@@ -106,7 +106,7 @@ async def submit_form(request: web.Request) -> web.Response:
 
 @routes.post("/repeat")
 async def repeat_element(request: web.Request) -> web.Response:
-    """Add Repetitions to the referenced RepetitionElement and store the form_data in the StateStorage."""
+    """Adds Repetitions to the referenced RepetitionElement and store the form_data in the StateStorage."""
     webserver: "WebServer" = request.app["sdk_webserver_app"]
     data = await request.json()
     old_form_data = add_repetition(

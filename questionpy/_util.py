@@ -18,11 +18,12 @@ def get_type_arg(
         generic_base: One of the direct bases of `derived`.
         arg_index: Among the type arguments accepted by `generic_base`, this is the index of the type argument to
                    return.
-        bound: Raises :class:`TypeError` if the type argument is not a subclass of this.
+        bound: Raises [`TypeError`][TypeError] if the type argument is not a subclass of this.
         default: Returns this when the type argument isn't given. If unset, an error is raised instead.
 
     Raises:
         TypeError: Upon any of the following:
+
             - `derived` is not a direct subclass of `generic_base` (transitive subclasses are not supported),
             - the type argument is not given and `default` is unset, or
             - the type argument is not a subclass of `bound`

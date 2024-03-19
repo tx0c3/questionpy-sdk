@@ -11,13 +11,15 @@ BuildHookName = Literal["pre", "post"]
 
 
 class PackageConfig(Manifest):
-    """This class expands upon :class:`questionpy_common.manifest.Manifest` by
-    incorporating additional configuration parameters.
+    """A QuestionPy source package configuration.
+
+    This class expands upon [`Manifest`][questionpy_common.manifest.Manifest] by incorporating additional configuration
+    parameters.
     """
 
     build_hooks: Mapping[BuildHookName, str | list[str]] = {}
 
     @property
     def manifest(self) -> Manifest:
-        """Create :class:`questionpy_common.manifest.Manifest` from config model."""
+        """Creates [`Manifest`][questionpy_common.manifest.Manifest] from config model."""
         return Manifest.model_validate(dict(self))

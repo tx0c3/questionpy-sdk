@@ -286,7 +286,7 @@ class QuestionUIRenderer:
     def hide_unwanted_feedback(
         self, xpath: etree.XPathDocumentEvaluator, options: QuestionDisplayOptions | None = None
     ) -> None:
-        """Hides elements marked with `qpy:feedback` if the type of feedback is disabled in ``options``"""
+        """Hides elements marked with `qpy:feedback` if the type of feedback is disabled in `options`."""
         if not options:
             return
 
@@ -302,8 +302,9 @@ class QuestionUIRenderer:
                     parent.remove(element)
 
     def hide_if_role(self, xpath: etree.XPathDocumentEvaluator, options: QuestionDisplayOptions | None = None) -> None:
-        """Removes elements with `qpy:if-role` attributes if the user matches none of the given roles in this
-        context.
+        """Hides elements based on user role.
+
+        Removes elements with `qpy:if-role` attributes if the user matches none of the given roles in this context.
         """
         if not options or options.context.get("role") == "admin":
             return
@@ -328,10 +329,10 @@ class QuestionUIRenderer:
     ) -> None:
         """Transforms input(-like) elements.
 
-        - If ``options`` is set, the input is disabled.
+        - If `options` is set, the input is disabled.
         - If a value was saved for the input in a previous step, the latest value is added to the HTML.
 
-        Requires the unmangled name of the element, so must be called `before` ``mangle_ids_and_names``
+        Requires the unmangled name of the element, so must be called `before` `mangle_ids_and_names`
         """
         for element in assert_element_list(xpath("//xhtml:button | //xhtml:input | //xhtml:select | //xhtml:textarea")):
             # Disable the element if options specify readonly
@@ -368,10 +369,11 @@ class QuestionUIRenderer:
 
     # TODO: refactor to reduce complexity
     def soften_validation(self, xpath: etree.XPathDocumentEvaluator) -> None:  # noqa: C901
-        """Replaces the HTML attributes `pattern`, `required`, `minlength`, `maxlength`, `min, `max` so that submission
-        is not prevented.
+        """Replaces HTML attributes so that submission is not prevented.
 
-        The standard attributes are replaced with `data-qpy_X`, which are then evaluated in JS.
+        Removes attributes `pattern`, `required`, `minlength`, `maxlength`, `min`, `max` from elements, so form
+        submission is not affected. The standard attributes are replaced with `data-qpy_X`, which are then evaluated in
+        JavaScript.
         """
         # Handle 'pattern' attribute for <input> elements
         for element in assert_element_list(xpath(".//xhtml:input[@pattern]")):
@@ -552,4 +554,4 @@ class QuestionUIRenderer:
 
 
 class FormulationElementMissingError(Exception):
-    """Exception raised when a 'qpy:formulation' element is missing from the XML."""
+    """Exception raised when a `qpy:formulation` element is missing from the XML."""

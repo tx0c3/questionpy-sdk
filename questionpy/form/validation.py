@@ -1,7 +1,11 @@
-r"""Validation of :class:`OptionsFormDefinition`\\ s, chiefly :func:`validate_form`.
+"""This module handles form validation.
 
-The form is considered a tree whose root node is the :class:`OptionsFormDefinition` and other nodes are either form
-sections or form elements. A reference is a path from the referrer to the referent along that tree.
+It carries out validation of [`OptionsFormDefinition`][questionpy_common.elements.OptionsFormDefinition], chiefly using
+[`validate_form`][questionpy.form.validation.validate_form].
+
+The form is considered a tree whose root node is the
+[`OptionsFormDefinition`][questionpy_common.elements.OptionsFormDefinition] and other nodes are either form sections or
+form elements. A reference is a path from the referrer to the referent along that tree.
 """
 
 #  This file is part of the QuestionPy SDK. (https://questionpy.org)
@@ -148,22 +152,23 @@ def _validate_node(node: _FormNode, parents: Sequence[_FormNode]) -> None:
 def validate_form(form: OptionsFormDefinition) -> None:
     """Validates that all condition references in the given form resolve to a valid element.
 
-    The format of a reference is documented in :mod:`questionpy.form._dsl`. This function checks that each reference
+    The format of a reference is documented in [`questionpy.form`][]. This function checks that each reference
     resolves to an element, and that that element is a valid target for the condition kind:
 
-    - `is_(not_)checked` conditions may only point to :class:`CheckboxElement`\\ s.
+    - `is_(not_)checked` conditions may only point to [`CheckboxElement`s][questionpy.form.CheckboxElement].
     - `equals`, `does_not_equal` and `is_in` conditions may point to all input elements that produce a value, including
-      :class:`CheckboxElement`.
+      [`CheckboxElement`s][questionpy.form.CheckboxElement].
 
     Args:
-        form: The form to validate, such as from :attr:`FormModel.qpy_form`.
+        form: The form to validate, such as from [`FormModel.qpy_form`][questionpy.form.FormModel.qpy_form].
 
     Raises:
         FormReferenceError: If a reference in the form doesn't point to anything.
         FormError: If
+
             - a reference is syntactically invalid,
             - the element a condition reference points to is not valid for the condition kind,
-            - a reference is made into a :class:`RepetitionElement`, or
+            - a reference is made into a [`RepetitionElement`][questionpy.form.RepetitionElement], or
             - an ambiguous reference is made because a name is used twice in the form.
     """
     _validate_node(form, [])

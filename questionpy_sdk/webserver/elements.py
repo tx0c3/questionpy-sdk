@@ -128,7 +128,8 @@ class CxdRadioGroupElement(RadioGroupElement, _CxdFormElement):
         for option in self.options:
             path = data.get("path")
             if not isinstance(path, list):
-                raise TypeError(f"Path should be of type list but is {type(path)}")
+                msg = f"Path should be of type list but is {type(path)}"
+                raise TypeError(msg)
             path.append(option.value)
             self.cxd_options.append(CxdOption(**option.model_dump(), path=path))
             path.pop()
@@ -155,7 +156,8 @@ class CxdSelectElement(SelectElement, _CxdFormElement):
         for option in self.options:
             path = data.get("path")
             if not isinstance(path, list):
-                raise TypeError(f"Path should be of type list but is {type(path)}")
+                msg = f"Path should be of type list but is {type(path)}"
+                raise TypeError(msg)
             path.append(option.value)
             self.cxd_options.append(CxdOption(**option.model_dump(), path=path))
             path.pop()

@@ -79,7 +79,7 @@ def test_should_raise_validation_error_when_required_option_is_missing() -> None
 
 
 @pytest.mark.parametrize(
-    "initializer,expected_elements",
+    ("initializer", "expected_elements"),
     [
         (
             form.text_input("Label", required=True, help="Help"),
@@ -145,7 +145,7 @@ def test_should_render_correct_form(initializer: object, expected_elements: list
 
 
 @pytest.mark.parametrize(
-    "annotation,initializer,input_value,expected_result",
+    ("annotation", "initializer", "input_value", "expected_result"),
     [
         # text_input
         (str, form.text_input("", required=True), "valid", "valid"),
@@ -212,7 +212,7 @@ def test_should_parse_correctly_when_input_is_valid(
 
 
 @pytest.mark.parametrize(
-    "annotation,initializer,input_value",
+    ("annotation", "initializer", "input_value"),
     [
         # text_input
         (str, form.text_input("", required=True), ...),
@@ -250,7 +250,7 @@ def test_should_raise_validation_error_when_input_is_invalid(
 
 
 @pytest.mark.parametrize(
-    "annotation,initializer",
+    ("annotation", "initializer"),
     [
         # text_input
         (str, form.text_input("", required=False)),

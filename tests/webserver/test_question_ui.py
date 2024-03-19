@@ -103,7 +103,7 @@ def test_should_show_inline_feedback() -> None:
 
 
 @pytest.mark.parametrize(
-    "user_context, expected",
+    ("user_context", "expected"),
     [
         (
             "guest",

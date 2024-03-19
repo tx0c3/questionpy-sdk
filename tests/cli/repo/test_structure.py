@@ -100,15 +100,15 @@ def test_structure_creates_only_one_package_if_identical(count: int) -> None:
 
 
 @pytest.mark.parametrize(
-    "package_1, package_2",
+    ("package_1", "package_2"),
     [
-        [("namespace_1", "shortname", "1.0.0"), ("namespace_2", "shortname", "1.0.0")],  # diff. namespaces, same names
-        [("namespace", "shortname_1", "1.0.0"), ("namespace", "shortname_2", "1.0.0")],  # same namespaces, diff. names
-        [
+        (("namespace_1", "shortname", "1.0.0"), ("namespace_2", "shortname", "1.0.0")),  # diff. namespaces, same names
+        (("namespace", "shortname_1", "1.0.0"), ("namespace", "shortname_2", "1.0.0")),  # same namespaces, diff. names
+        (
             ("namespace_1", "shortname_1", "1.0.0"),
             ("namespace_2", "shortname_2", "1.0.0"),
-        ],  # diff. namespaces and names
-        [("namespace", "shortname", "1.0.0"), ("namespace", "shortname", "2.0.0")],  # same package, diff. versions
+        ),  # diff. namespaces and names
+        (("namespace", "shortname", "1.0.0"), ("namespace", "shortname", "2.0.0")),  # same package, diff. versions
     ],
     ids=[
         "different_namespaces-same_short_names",

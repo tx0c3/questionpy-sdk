@@ -19,7 +19,7 @@ from selenium import webdriver
 from questionpy_sdk.webserver.app import WebServer
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def sdk_web_server(request: pytest.FixtureRequest) -> Iterator[WebServer]:
     # We DON'T want state files to persist between tests, so we use a temp dir which is removed after each test.
     with tempfile.TemporaryDirectory() as state_storage_tempdir:
@@ -55,12 +55,10 @@ def start_runner(web_app: web.Application, unused_port: int) -> None:
 
 
 @pytest.fixture
-def start_runner_thread(sdk_web_server: WebServer, port: int) -> Iterator:
+def _start_runner_thread(sdk_web_server: WebServer, port: int) -> None:
     app_thread = threading.Thread(target=start_runner, args=(sdk_web_server.web_app, port))
     app_thread.daemon = True  # Set the thread as a daemon to automatically stop when main thread exits
     app_thread.start()
-
-    return
 
 
 def normalize_element(element: etree._Element) -> etree._Element:

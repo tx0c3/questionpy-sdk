@@ -435,11 +435,7 @@ class QuestionUIRenderer:
 
         for element in assert_element_list(xpath("//*[@qpy:shuffle-contents]")):
             # Collect child elements to shuffle them
-            child_elements = [
-                child
-                for child in element
-                if isinstance(child, etree._Element)  # pylint: disable=protected-access
-            ]
+            child_elements = [child for child in element if isinstance(child, etree._Element)]
             random.shuffle(child_elements)
 
             element.attrib.pop("{%s}shuffle-contents" % self.QPY_NAMESPACE)

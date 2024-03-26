@@ -119,16 +119,12 @@ def _is_valid_annotation(annotation: object, expected: object) -> bool:
 
 
 class _FormModelMeta(ModelMetaclass):
-    # Gives false positives in metaclasses: https://github.com/PyCQA/pylint/issues/3268
-    # pylint: disable=no-value-for-parameter
-
     if TYPE_CHECKING:
         # this is set by ModelMetaclass, but mypy doesn't know
         model_fields: dict[str, FieldInfo]
 
     __slots__ = ()
 
-    # pylint: disable=signature-differs
     def __new__(mcs, name: str, bases: tuple[type, ...], namespace: dict, **kwargs: Any) -> type:  # noqa: N804
         annotations = namespace.get("__annotations__", {}).copy()
         new_namespace = {}

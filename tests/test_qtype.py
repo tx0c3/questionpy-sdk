@@ -102,14 +102,14 @@ def test_should_use_init_arguments() -> None:
 
 def test_should_raise_when_unrelated_type_arg_is_given() -> None:
     with pytest.raises(TypeError, match="is not a subclass of FormModel"):
-        # pylint: disable=unused-variable
+
         class MyQType(QuestionType[int, Question]):  # type: ignore[type-var] # (intentionally wrong)
             pass
 
 
 def test_should_raise_when_type_args_are_missing() -> None:
     with pytest.raises(TypeError, match=r"Missing type argument on QuestionType \(type arg #1\)"):
-        # pylint: disable=unused-variable
+
         class MyQType(QuestionType):
             pass
 
@@ -120,7 +120,7 @@ def test_should_raise_when_transitive_inheritance() -> None:
         pass
 
     with pytest.raises(TypeError, match="Transitive is not a direct subclass of QuestionType"):
-        # pylint: disable=unused-variable
+
         class Transitive(Direct):
             pass
 
@@ -132,7 +132,7 @@ class SomeModel2(SomeModel):
 
 def test_should_raise_with_different_form_models() -> None:
     with pytest.raises(TypeError, match="must have the same FormModel as"):
-        # pylint: disable=unused-variable
+
         class MyQType(QuestionType[SomeModel2, SomeQuestion]):
             pass
 
@@ -141,14 +141,14 @@ def test_should_raise_with_different_form_models() -> None:
             return QuestionModel(scoring_method=ScoringMethod.AUTOMATICALLY_SCORABLE)
 
     with pytest.raises(TypeError, match="must have the same FormModel as"):
-        # pylint: disable=unused-variable
+
         class MyQType2(QuestionType[SomeModel, SomeQuestion2]):
             pass
 
 
 def test_should_raise_with_generic_form_model() -> None:
     with pytest.raises(TypeError, match="BaseQuestionState must declare a specific FormModel."):
-        # pylint: disable=unused-variable
+
         class SomeQuestion2(Question[BaseQuestionState, SomeAttempt]):
             def export(self) -> QuestionModel:
                 return QuestionModel(scoring_method=ScoringMethod.AUTOMATICALLY_SCORABLE)

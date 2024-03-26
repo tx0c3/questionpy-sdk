@@ -2,9 +2,6 @@
 #  The QuestionPy Server is free software released under terms of the MIT license. See LICENSE.md.
 #  (c) Technische Universität Berlin, innoCampus <info@isis.tu-berlin.de>
 
-# Stop pylint complaining about fixtures.
-# pylint: disable=redefined-outer-name
-
 import asyncio
 import tempfile
 import threading

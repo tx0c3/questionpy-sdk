@@ -283,7 +283,6 @@ def test_should_raise_type_error_when_annotation_is_wrong(annotation: object, in
     with pytest.raises(TypeError):
 
         class TheModel(form.FormModel):
-            # pylint: disable=unused-variable
             field: annotation = initializer  # type: ignore[valid-type]
 
 

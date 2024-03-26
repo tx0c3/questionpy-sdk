@@ -25,6 +25,4 @@ cli.add_command(run)
 cli.add_command(repo)
 
 if __name__ == "__main__":
-    # PyLint doesn't understand that click.group doesn't return a function
-    # pylint: disable=no-value-for-parameter
     cli()

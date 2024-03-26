@@ -7,7 +7,6 @@ from typing import Annotated, Any, TypeAlias
 
 from pydantic import BaseModel, Field, computed_field
 
-# pylint: disable=unused-import
 from questionpy_common.elements import (
     CheckboxElement,
     CheckboxGroupElement,

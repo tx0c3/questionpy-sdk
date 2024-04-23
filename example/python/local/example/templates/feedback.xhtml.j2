@@ -1,0 +1,6 @@
+<div xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:qpy="http://questionpy.org/ns/question">
+    {% if attempt.scoring_state %}
+        This question has been scored for the {{ attempt.scoring_state.custom_field }}th time.
+    {% endif %}
+</div>

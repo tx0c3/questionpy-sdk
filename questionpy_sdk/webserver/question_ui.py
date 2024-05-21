@@ -166,7 +166,7 @@ class QuestionUIRenderer:
         # TODO: mangle_ids_and_names
         self.clean_up(newdoc, xpath)
 
-        return etree.tostring(newdoc, pretty_print=True).decode()
+        return etree.tostring(newdoc, pretty_print=True, method="html").decode()
 
     def resolve_placeholders(self, xpath: etree.XPathDocumentEvaluator) -> None:
         """Replace placeholder PIs such as `<?p my_key plain?>` with the appropriate value from `self.placeholders`.
@@ -210,7 +210,7 @@ class QuestionUIRenderer:
                 if cleaned_value.text:
                     content += cleaned_value.text
                 for child in cleaned_value:
-                    content += etree.tostring(child, encoding="unicode", with_tail=True)
+                    content += etree.tostring(child, encoding="unicode", method="html", with_tail=True)
                 replacement = content
             else:
                 replacement = raw_value
